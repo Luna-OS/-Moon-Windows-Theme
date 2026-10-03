@@ -97,7 +97,7 @@ Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen od
 
 ### Schritt 3 (optional): Feinschliff
 
-- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). In der Großsymbol-Ansicht zeigt Windows bei Ordnern mit Bildern manchmal weiterhin eine Vorschau.
+- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). Damit Windows das Moon-Symbol nicht nach einem Moment wieder durch die gelbe Ordnervorschau (Ordner mit Inhalt) ersetzt, schaltet Moon nur diese Ordnervorschau ab. Vorschaubilder von Fotos und Videos bleiben erhalten. „Theme entfernen“ stellt alles wieder her.
 - **Lila Mauszeiger**: Einstellungen → Barrierefreiheit → Mauszeiger und Toucheingabe → Stil „Benutzerdefiniert“ → Farbe `#B8ABFF`.
 - **Windows Terminal**: Inhalt von `extras/windows-terminal-moon.json` in der `settings.json` unter `"schemes"` einfügen und im Profil `"colorScheme": "Moon"` setzen.
 

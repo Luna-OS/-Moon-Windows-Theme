@@ -67,6 +67,7 @@ $AdvancedKey    = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Adva
 $ThemesKey      = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes'
 $LockKey        = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
 $ShellIconsKey  = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons'
+$FolderBagKey   = 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell'
 
 function Write-Step([string]$Text) { Write-Host "  > $Text" -ForegroundColor Magenta }
 
@@ -173,6 +174,7 @@ if (-not (Test-Path $Backup)) {
         Get-RegEntry $AdvancedKey    'TaskbarAl'             'DWord'
         Get-RegEntry $ShellIconsKey  '3'                     'String'
         Get-RegEntry $ShellIconsKey  '4'                     'String'
+        Get-RegEntry $FolderBagKey   'Logo'                  'String'
     )
     $entries | ConvertTo-Json -Depth 3 | Set-Content -Path $Backup -Encoding UTF8
 } else {
@@ -245,6 +247,10 @@ if (-not $NoFolderIcons) {
         Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder-open.ico') -Destination $openIcon -Force
         Set-RegValue $ShellIconsKey '3' ($closedIcon + ',0') 'String'
         Set-RegValue $ShellIconsKey '4' ($openIcon + ',0') 'String'
+        # Ordnervorschau (Inhalt im gelben Ordner) abschalten, sonst ersetzt Windows das Moon-Symbol
+        # kurz nach dem Anzeigen wieder. Die Vorlage zeigt absichtlich auf eine NICHT vorhandene Datei;
+        # Vorschaubilder von Fotos/Videos bleiben erhalten.
+        Set-RegValue $FolderBagKey 'Logo' (Join-Path $LockDir 'no-folder-preview.jpg') 'String'
         $iconsChanged = $true
     } else {
         Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'
@@ -271,6 +277,8 @@ if (-not $NoExplorerRestart) {
         # Symbol-Cache leeren, damit die neuen Ordnersymbole sofort erscheinen
         Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\iconcache_*.db') -Force -ErrorAction SilentlyContinue
         Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'IconCache.db') -Force -ErrorAction SilentlyContinue
+        # Vorschau-Cache leeren, damit alte gelbe Ordnervorschauen verschwinden
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\thumbcache_*.db') -Force -ErrorAction SilentlyContinue
     }
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
     if ($iconsChanged) {
