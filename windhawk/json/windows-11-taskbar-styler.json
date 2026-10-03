@@ -32,7 +32,7 @@
     "controlStyles[3].target": "Taskbar.TaskbarBackground#HoverFlyoutBackgroundControl",
     "controlStyles[3].styles[0]": "CornerRadius=$mainRadius",
     "controlStyles[4].target": "Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel",
-    "controlStyles[4].styles[0]": "Background:=<ImageBrush Stretch=\"Uniform\" ImageSource=\"https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Icons/moon-start.png\"/>",
+    "controlStyles[4].styles[0]": "Background:=<ImageBrush Stretch=\"Uniform\" ImageSource=\"https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start.png\"/>",
     "controlStyles[5].target": "Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Grid > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon, Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon",
     "controlStyles[5].styles[0]": "Visibility=Collapsed",
     "controlStyles[6].target": "Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton]",

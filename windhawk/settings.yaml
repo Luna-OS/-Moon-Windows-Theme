@@ -4,7 +4,7 @@
 # Sternenhimmel als Hintergrund (wird von GitHub geladen); Karten, Startseite, Suchfeld,
 # Symbole, Menues und Dialoge in Moon-Lila.
 styleConstants:
-  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center" ImageSource="https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Starfield/starfield-settings.jpg"/>
+  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Starfield/starfield-settings.jpg"/>
   - MoonContent=<SolidColorBrush Color="#40130F28"/>
   - MoonCard=<SolidColorBrush Color="#99211A44"/>
   - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>

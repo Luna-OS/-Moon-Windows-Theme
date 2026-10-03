@@ -12,7 +12,7 @@
   ],
   "settings": {
     "theme": "",
-    "styleConstants[0]": "MoonStars=<ImageBrush Stretch=\"UniformToFill\" AlignmentX=\"Center\" AlignmentY=\"Center\" ImageSource=\"https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Starfield/starfield-settings.jpg\"/>",
+    "styleConstants[0]": "MoonStars=<ImageBrush Stretch=\"UniformToFill\" AlignmentX=\"Center\" AlignmentY=\"Center\" ImageSource=\"https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Starfield/starfield-settings.jpg\"/>",
     "styleConstants[1]": "MoonContent=<SolidColorBrush Color=\"#40130F28\"/>",
     "styleConstants[2]": "MoonCard=<SolidColorBrush Color=\"#99211A44\"/>",
     "styleConstants[3]": "MoonFlyout=<WindhawkBlur BlurAmount=\"30\" TintColor=\"#F21A1535\" FallbackColor=\"#FF1A1535\"/>",
