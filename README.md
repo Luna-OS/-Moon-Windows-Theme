@@ -11,9 +11,9 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | Hintergrund (3 Motive, 4K) | Installationsskript | `theme/Wallpapers/` |
 | Dunkelmodus, Transparenz, Akzentfarbe Lila | Installationsskript | `install.ps1` |
 | **Einstellungen-App** (Grundfarben) | Dunkelmodus, lila Akzent (Links, Schalter, Markierungen), lila Mica-Tönung durch den Hintergrund | `install.ps1` |
-| **Einstellungen-App** (Inhalt: Karten, Startseite, Suchfeld, Symbole, Menüs, Dialoge) | Windhawk-Mod | `windhawk/settings.yaml` |
+| **Einstellungen-App** mit Sternenhimmel (Karten, Startseite, Suchfeld, Symbole, Menüs, Dialoge) | Windhawk-Mod | `windhawk/settings.yaml` |
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
-| **Startmenü** (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
+| **Startmenü** mit Sternenhimmel (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
 | **Taskleiste**, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
 | Infocenter: Benachrichtigungen, Kalender, Schnelleinstellungen, Medien, Sprunglisten | Windhawk-Mod | `windhawk/notification-center.yaml` |
 | Explorer | Windhawk-Mod | `windhawk/file-explorer.yaml` |
@@ -96,6 +96,8 @@ Akzent-Palette (Windows): `#E2DCFF` `#C9BFFF` `#AC9EFF` **`#8E7CFF`** `#6A57E0` 
 
 ## Gut zu wissen
 
+- **Sternenhimmel**: Startmenü und Einstellungen laden ihr Hintergrundbild aus diesem GitHub-Repo (`theme/Starfield/`). Windhawk kann Bilder von lokalen Pfaden dort oft nicht anzeigen. Ohne Internet bleibt der Hintergrund leer bzw. durchsichtig. Wer lieber den lila Glas-Look ohne Bild möchte: in `start-menu.yaml` `$MoonStars` durch `$MoonBg` ersetzen.
+
 - **Einstellungen-App**: Ohne Windhawk färbt Moon sie über Dunkelmodus, Akzentfarbe und Mica: Der lila Hintergrund tönt das Fenster ein, Links, Schalter und Markierungen werden lila. Mit dem **Windows 11 Settings Styler** und `windhawk/settings.yaml` werden zusätzlich Inhaltsbereich, Karten, Startseite, Suchfeld, Symbole, Menüs und Dialoge lila. Nach dem Speichern die Einstellungen-App schließen und neu öffnen.
 - Wenn nach der Installation noch nicht alles lila ist (z. B. in einzelnen Apps): **einmal ab- und wieder anmelden**.
 - **Windows-Updates** können Startmenü oder Taskleiste intern ändern. Wenn danach einzelne Teile wieder grau aussehen, Windhawk und die Mods aktualisieren.
@@ -109,6 +111,7 @@ install.ps1 / Install.cmd        Grund-Theme installieren
 uninstall.ps1 / Uninstall.cmd    Alles zurücksetzen
 theme/Moon.theme                 Windows-Theme-Datei
 theme/Wallpapers/                Hintergründe (4K)
+theme/Starfield/                 Sternenhimmel für Startmenü und Einstellungen
 windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
