@@ -1,74 +1,208 @@
-# Moon - Windows 11 Taskbar Styler
+# Moon - Windows 11 Taskbar Styler (Variante "Matter", transparent)
 # Windhawk > Windows 11 Taskbar Styler > Einstellungen > "Textual mode"
 # Gesamten Inhalt einfuegen und "Save settings" klicken.
-# Deckt ab: Taskleiste, Infobereich, Vorschaufenster, Alt+Tab und Taskansicht.
+# Basiert auf dem Matter-Theme von ZoraizLajwer: durchsichtige Leiste, jede App als
+# eigene Glas-Kachel, Infobereich als Pille - hier in Moon-Lila und mit Moon-Start-Logo.
+# Tipp (wie bei Matter): Mod "Taskbar height and icon size" mit
+#   Taskbar Height = 48, Icon Size = 23, Taskbar Button Width = 45
 styleConstants:
-  - MoonBg=<WindhawkBlur BlurAmount="25" TintColor="#D9130F28" FallbackColor="#FF130F28"/>
-  - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
-  - MoonHover=<SolidColorBrush Color="#26B8ABFF"/>
-  - MoonPressed=<SolidColorBrush Color="#1AB8ABFF"/>
-  - MoonActive=<SolidColorBrush Color="#338E7CFF"/>
-  - MoonActiveHover=<SolidColorBrush Color="#478E7CFF"/>
-  - MoonBorder=#598E7CFF
-  - Radius=8
+  - mainRadius=8
+  - transparent=<SolidColorBrush Color="Transparent"/>
+  - base=<WindhawkBlur BlurAmount="16" TintColor="#4D1A1535" FallbackColor="#E61A1535"/>
+  - hover=<WindhawkBlur BlurAmount="16" TintColor="#40B8ABFF" FallbackColor="#E62E2656"/>
+  - activeHover=<WindhawkBlur BlurAmount="16" TintColor="#738E7CFF" FallbackColor="#E64B3AB3"/>
+  - active=<WindhawkBlur BlurAmount="16" TintColor="#598E7CFF" FallbackColor="#E63A2F7A"/>
+  - pressed=<WindhawkBlur BlurAmount="16" TintColor="#33B8ABFF" FallbackColor="#E6241D47"/>
+  - flyout=<WindhawkBlur BlurAmount="30" TintColor="#E61A1535" FallbackColor="#FF1A1535"/>
+  - accent=<SolidColorBrush Color="#B8ABFF"/>
+  - dim=<SolidColorBrush Color="#9A90C8"/>
+  - attention=<SolidColorBrush Color="#FF8FB1"/>
 controlStyles:
-  # Taskleisten-Hintergrund und obere Kante
+  # Leiste selbst komplett durchsichtig
   - target: Taskbar.TaskbarFrame > Grid#RootGrid > Taskbar.TaskbarBackground > Grid > Rectangle#BackgroundFill
     styles:
-      - Fill:=$MoonBg
-  - target: Taskbar.TaskbarFrame > Grid#RootGrid > Taskbar.TaskbarBackground > Grid > Rectangle#BackgroundStroke
+      - Fill:=$transparent
+  - target: Rectangle#BackgroundStroke
     styles:
-      - Fill=$MoonBorder
+      - Fill:=$transparent
 
   # Fenster-Vorschau beim Hovern
   - target: Taskbar.TaskbarBackground#HoverFlyoutBackgroundControl > Grid > Rectangle#BackgroundFill
     styles:
-      - Fill:=$MoonFlyout
-
-  # App-Buttons
-  - target: Grid#IconPanel@CommonStates > Border#BackgroundElement, Taskbar.TaskListLabeledButtonPanel@CommonStates > Border#BackgroundElement
+      - Fill:=$flyout
+  - target: Taskbar.TaskbarBackground#HoverFlyoutBackgroundControl
     styles:
-      - CornerRadius=$Radius
-      - Background@InactiveNormal=Transparent
-      - Background@InactivePointerOver:=$MoonHover
-      - Background@InactivePressed:=$MoonPressed
-      - Background@ActiveNormal:=$MoonActive
-      - Background@ActivePointerOver:=$MoonActiveHover
-      - Background@ActivePressed:=$MoonActive
+      - CornerRadius=$mainRadius
 
   # Start-Button: Moon-Logo statt Windows-Logo (Bild wird von GitHub geladen)
   - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel
     styles:
-      - Background:=<ImageBrush Stretch="Uniform" ImageSource="https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Icons/moon-start.png"/>
+      - Background:=<ImageBrush Stretch="Uniform" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start.png"/>
   - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Grid > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon, Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon
     styles:
       - Visibility=Collapsed
+  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton]
+    styles:
+      - Margin=0,0,2,0
 
-  # Start, Suche, Taskansicht, Widgets
+  # Start, Suche, Taskansicht, Widgets: eigene Glas-Kacheln
   - target: Taskbar.TaskListButtonPanel@CommonStates > Grid > Border#BackgroundElement, Taskbar.TaskListButtonPanel@CommonStates > Border#BackgroundElement
     styles:
-      - CornerRadius=$Radius
-      - Background@InactiveNormal=Transparent
-      - Background@InactivePointerOver:=$MoonHover
-      - Background@InactivePressed:=$MoonPressed
-      - Background@ActiveNormal:=$MoonActive
-      - Background@ActivePointerOver:=$MoonActiveHover
-      - Background@ActivePressed:=$MoonActive
+      - CornerRadius=$mainRadius
+      - Background:=$base
+      - Background@InactivePointerOver:=$hover
+      - Background@InactivePressed:=$pressed
+      - Background@ActiveNormal:=$active
+      - Background@ActivePointerOver:=$activeHover
+      - Background@ActivePressed:=$pressed
+  - target: SearchUx.SearchUI.SearchButtonRootGrid@CommonStates > Grid > Border#BackgroundElement, SearchUx.SearchUI.SearchButtonRootGrid@CommonStates > Border#BackgroundElement
+    styles:
+      - CornerRadius=$mainRadius
+      - Background:=$base
+      - Background@InactiveNormal:=$base
+      - Background@InactivePointerOver:=$hover
+      - Background@ActiveNormal:=$active
+      - Background@ActivePointerOver:=$activeHover
+  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.Name=Task View]
+    styles:
+      - Margin=0,0,2,0
+  - target: Taskbar.SearchBoxButton
+    styles:
+      - Margin=0,0,2,0
+  - target: SearchUx.SearchUI.SearchButtonControl
+    styles:
+      - Margin=0,0,2,0
+  - target: Taskbar.AugmentedEntryPointButton#AugmentedEntryPointButton
+    styles:
+      - Margin=-1,1,1,1
+  - target: Border#BackgroundElement
+    styles:
+      - BorderThickness=0
 
-  # Laufende-App-Strich unter den Symbolen
+  # App-Buttons: jede App als eigene Glas-Kachel
+  - target: Grid#IconPanel@CommonStates > Border#BackgroundElement, Taskbar.TaskListLabeledButtonPanel@CommonStates > Border#BackgroundElement
+    styles:
+      - CornerRadius=$mainRadius
+      - Margin=1,0,1,0
+      - Background@InactiveNormal:=$base
+      - Background@InactivePointerOver:=$hover
+      - Background@InactivePressed:=$pressed
+      - Background@ActiveNormal:=$active
+      - Background@ActivePointerOver:=$activeHover
+      - Background@ActivePressed:=$pressed
+      - Background@MultiWindowNormal:=$base
+      - Background@MultiWindowPointerOver:=$hover
+      - Background@MultiWindowActive:=$active
+      - Background@MultiWindowPressed:=$pressed
+  - target: Border#MultiWindowElement
+    styles:
+      - CornerRadius=$mainRadius
+      - Padding=7,0,8,0
+      - Background:=$accent
+  - target: Grid#IconPanel > TextBlock#LabelControl, Taskbar.TaskListLabeledButtonPanel > TextBlock#LabelControl
+    styles:
+      - Margin=0,0,2,0
+
+  # Laufende-App-Strich: kleine Pille, aktive App lang und lila
   - target: Grid#IconPanel@RunningIndicatorStates > Rectangle#RunningIndicator, Taskbar.TaskListLabeledButtonPanel@RunningIndicatorStates > Rectangle#RunningIndicator
     styles:
-      - Fill=#9A90C8
-      - Fill@ActiveRunningIndicator=#B8ABFF
-      - Width@ActiveRunningIndicator=18
-      - Fill@RequestingAttentionRunningIndicator=#FF8FB1
+      - Fill:=$dim
+      - RadiusX=1.5
+      - RadiusY=1.5
+      - Height=4
+      - Width=12
+      - Fill@ActiveRunningIndicator:=$accent
+      - Width@ActiveRunningIndicator=21
+      - Fill@RequestingAttentionRunningIndicator:=$attention
 
-  # Infobereich: ausgeblendete Symbole (^)
+  # Fortschrittsbalken in Apps (z. B. Downloads)
+  - target: Taskbar.TaskListButton#TaskListButton > Grid#IconPanel > Microsoft.UI.Xaml.Controls.ProgressBar#ProgressIndicator, Taskbar.TaskListButton#TaskListButton > Taskbar.TaskListLabeledButtonPanel#IconPanel > Microsoft.UI.Xaml.Controls.ProgressBar#ProgressIndicator
+    styles:
+      - MinHeight=4
+      - Width=26
+  - target: Windows.UI.Xaml.Shapes.Rectangle#ProgressBarTrack
+    styles:
+      - Fill:=$dim
+      - RadiusX=1.5
+      - RadiusY=1.5
+  - target: Windows.UI.Xaml.Shapes.Rectangle#DeterminateProgressBarIndicator
+    styles:
+      - Fill:=$accent
+
+  # Benachrichtigungs-Zaehler auf App-Symbolen
+  - target: Taskbar.Badge#BadgeControl
+    styles:
+      - Height=14
+      - MinWidth=14
+      - Margin=0,0,0,0
+      - CornerRadius=20
+  - target: Windows.UI.Xaml.Shapes.Rectangle#BackgroundRect
+    styles:
+      - RadiusX=4
+      - RadiusY=4
+
+  # Infobereich (Uhr, WLAN, Ton) als Glas-Pille
+  - target: StackPanel#SystemTrayFrameGrid, Grid#SystemTrayFrameGrid
+    styles:
+      - Background:=$base
+      - CornerRadius=$mainRadius
+      - Margin=0,5,12,5
+      - Padding=5,0,0,0
+  - target: Border#BackgroundBorder
+    styles:
+      - Margin=2,5,2,5
+      - CornerRadius=$mainRadius
+      - BorderThickness=0
+  - target: Windows.UI.Xaml.Controls.ContentPresenter#ContentPresenter
+    styles:
+      - BorderThickness=0
+
+  # Ausgeblendete Symbole (^)
+  - target: Grid#OverflowRootGrid > Border
+    styles:
+      - Background:=$flyout
+      - Shadow:=
+      - CornerRadius=14
   - target: Border#OverflowFlyoutBackgroundBorder
     styles:
-      - Background:=$MoonFlyout
-      - BorderBrush=$MoonBorder
-      - CornerRadius=$Radius
+      - Background:=$flyout
+      - CornerRadius=14
+
+  # Lautstaerke- und Helligkeits-Anzeige
+  - target: Windows.UI.Xaml.Controls.Grid#ConfirmatorMainGrid
+    styles:
+      - Background:=$flyout
+      - CornerRadius=14
+      - BorderThickness=0
+      - Margin=0,0,0,10
+      - Shadow:=
+  - target: Windows.UI.Xaml.Controls.Grid#VolumeConfirmator
+    styles:
+      - Padding=8,0,3,0
+      - CornerRadius=20
+  - target: Windows.UI.Xaml.Controls.Grid#BrightnessConfirmator
+    styles:
+      - Padding=15,0,17,0
+      - CornerRadius=20
+  - target: Microsoft.UI.Xaml.Controls.AnimatedIcon#BrightnessIcon
+    styles:
+      - Margin=0,-1,12,0
+  - target: Windows.UI.Xaml.Shapes.Rectangle#HorizontalTrackRect
+    styles:
+      - Height=8
+      - Margin=0
+      - Fill:=$hover
+  - target: Windows.UI.Xaml.Shapes.Rectangle#HorizontalDecreaseRect
+    styles:
+      - Height=8
+      - Fill:=$accent
+
+  # Kontextmenues
+  - target: MenuFlyoutPresenter
+    styles:
+      - Background:=$flyout
+      - Shadow:=
+      - CornerRadius=$mainRadius
 
   # Alt+Tab
   - target: WindowsInternal.ComposableShell.Experiences.Switcher.AltTab > Grid#ModalRootGrid > Border#BackgroundElement

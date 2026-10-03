@@ -17,7 +17,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
 | **Ordnersymbole** (lila Ordner mit Mondsichel, passend zu Moon Explorer) | Installationsskript (Admin) | `theme/Icons/` |
 | **Startmenü** mit Sternenhimmel (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
-| **Taskleiste** mit Moon-Start-Logo, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
+| **Taskleiste** im Matter-Stil: durchsichtig, Apps als lila Glas-Kacheln, Moon-Start-Logo, Infobereich, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` (alter Glas-Look: `taskbar-glass.yaml`) |
 | Infocenter: Benachrichtigungen, Kalender, Schnelleinstellungen, Medien, Sprunglisten | Windhawk-Mod | `windhawk/notification-center.yaml` |
 | Explorer | Windhawk-Mod | `windhawk/file-explorer.yaml` |
 | Klassische Programme und Kontextmenüs (optional) | Windhawk-Mod | `windhawk/translucent-windows.yaml` |
@@ -97,7 +97,7 @@ Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen od
 
 ### Schritt 3 (optional): Feinschliff
 
-- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). In der Großsymbol-Ansicht zeigt Windows bei Ordnern mit Bildern manchmal weiterhin eine Vorschau.
+- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). Damit Windows das Moon-Symbol nicht nach einem Moment wieder durch die gelbe Ordnervorschau (Ordner mit Inhalt) ersetzt, schaltet Moon nur diese Ordnervorschau ab. Vorschaubilder von Fotos und Videos bleiben erhalten. „Theme entfernen“ stellt alles wieder her.
 - **Lila Mauszeiger**: Einstellungen → Barrierefreiheit → Mauszeiger und Toucheingabe → Stil „Benutzerdefiniert“ → Farbe `#B8ABFF`.
 - **Windows Terminal**: Inhalt von `extras/windows-terminal-moon.json` in der `settings.json` unter `"schemes"` einfügen und im Profil `"colorScheme": "Moon"` setzen.
 
@@ -144,6 +144,7 @@ extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
 tools/build_windhawk_settings.py Erzeugt windhawk/json/ aus den YAML-Styles (pip install pyyaml)
 tools/generate_icons.py          Erzeugt die Ordnersymbole neu (pip install pillow numpy)
+tools/Bilder neu erzeugen.cmd    Startet alle Generatoren (nur für Entwickler – zum Anwenden den Moon Installer nutzen)
 ```
 
 ## Lizenz

@@ -1,0 +1,90 @@
+# Moon - Windows 11 Taskbar Styler (Variante "Glass": durchgehende lila Glasleiste)
+# Windhawk > Windows 11 Taskbar Styler > Einstellungen > "Textual mode"
+# Gesamten Inhalt einfuegen und "Save settings" klicken.
+# Deckt ab: Taskleiste, Infobereich, Vorschaufenster, Alt+Tab und Taskansicht.
+styleConstants:
+  - MoonBg=<WindhawkBlur BlurAmount="25" TintColor="#D9130F28" FallbackColor="#FF130F28"/>
+  - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
+  - MoonHover=<SolidColorBrush Color="#26B8ABFF"/>
+  - MoonPressed=<SolidColorBrush Color="#1AB8ABFF"/>
+  - MoonActive=<SolidColorBrush Color="#338E7CFF"/>
+  - MoonActiveHover=<SolidColorBrush Color="#478E7CFF"/>
+  - MoonBorder=#598E7CFF
+  - Radius=8
+controlStyles:
+  # Taskleisten-Hintergrund und obere Kante
+  - target: Taskbar.TaskbarFrame > Grid#RootGrid > Taskbar.TaskbarBackground > Grid > Rectangle#BackgroundFill
+    styles:
+      - Fill:=$MoonBg
+  - target: Taskbar.TaskbarFrame > Grid#RootGrid > Taskbar.TaskbarBackground > Grid > Rectangle#BackgroundStroke
+    styles:
+      - Fill=$MoonBorder
+
+  # Fenster-Vorschau beim Hovern
+  - target: Taskbar.TaskbarBackground#HoverFlyoutBackgroundControl > Grid > Rectangle#BackgroundFill
+    styles:
+      - Fill:=$MoonFlyout
+
+  # App-Buttons
+  - target: Grid#IconPanel@CommonStates > Border#BackgroundElement, Taskbar.TaskListLabeledButtonPanel@CommonStates > Border#BackgroundElement
+    styles:
+      - CornerRadius=$Radius
+      - Background@InactiveNormal=Transparent
+      - Background@InactivePointerOver:=$MoonHover
+      - Background@InactivePressed:=$MoonPressed
+      - Background@ActiveNormal:=$MoonActive
+      - Background@ActivePointerOver:=$MoonActiveHover
+      - Background@ActivePressed:=$MoonActive
+
+  # Start-Button: Moon-Logo statt Windows-Logo (Bild wird von GitHub geladen)
+  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel
+    styles:
+      - Background:=<ImageBrush Stretch="Uniform" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start.png"/>
+  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Grid > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon, Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon
+    styles:
+      - Visibility=Collapsed
+
+  # Start, Suche, Taskansicht, Widgets
+  - target: Taskbar.TaskListButtonPanel@CommonStates > Grid > Border#BackgroundElement, Taskbar.TaskListButtonPanel@CommonStates > Border#BackgroundElement
+    styles:
+      - CornerRadius=$Radius
+      - Background@InactiveNormal=Transparent
+      - Background@InactivePointerOver:=$MoonHover
+      - Background@InactivePressed:=$MoonPressed
+      - Background@ActiveNormal:=$MoonActive
+      - Background@ActivePointerOver:=$MoonActiveHover
+      - Background@ActivePressed:=$MoonActive
+
+  # Laufende-App-Strich unter den Symbolen
+  - target: Grid#IconPanel@RunningIndicatorStates > Rectangle#RunningIndicator, Taskbar.TaskListLabeledButtonPanel@RunningIndicatorStates > Rectangle#RunningIndicator
+    styles:
+      - Fill=#9A90C8
+      - Fill@ActiveRunningIndicator=#B8ABFF
+      - Width@ActiveRunningIndicator=18
+      - Fill@RequestingAttentionRunningIndicator=#FF8FB1
+
+  # Infobereich: ausgeblendete Symbole (^)
+  - target: Border#OverflowFlyoutBackgroundBorder
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush=$MoonBorder
+      - CornerRadius=$Radius
+
+  # Alt+Tab
+  - target: WindowsInternal.ComposableShell.Experiences.Switcher.AltTab > Grid#ModalRootGrid > Border#BackgroundElement
+    styles:
+      - Background=Transparent
+  - target: WindowsInternal.ComposableShell.Experiences.Switcher.AltTab > Grid#ModalRootGrid > Border#BackgroundElement > WindowsInternal.ComposableShell.Experiences.Switcher.SwitchItemList
+    styles:
+      - Background=#F21A1535
+
+  # Taskansicht (Win+Tab)
+  - target: Windows.UI.Xaml.Controls.Border#BackgroundDimmingLayer
+    styles:
+      - Background=#CC0C0A1A
+themeResourceVariables:
+  - ControlFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
+  - ControlFillColorSecondaryBrush:=<SolidColorBrush Color="#24B8ABFF"/>
+  - SubtleFillColorSecondaryBrush:=<SolidColorBrush Color="#1FB8ABFF"/>
+  - SubtleFillColorTertiaryBrush:=<SolidColorBrush Color="#14B8ABFF"/>
+  - TextFillColorSecondaryBrush:=<SolidColorBrush Color="#D0C8F5"/>

@@ -23,6 +23,7 @@ $Backup   = Join-Path $ThemeDir 'backup.json'
 $LockDir  = Join-Path $env:ProgramData 'MoonTheme'
 $LockKey  = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
 $ShellIconsKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons'
+$FolderBagKey  = 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell'
 
 function Write-Step([string]$Text) { Write-Host "  > $Text" -ForegroundColor Magenta }
 
@@ -106,6 +107,13 @@ if (Test-Path $LockDir) {
                 $iconsRemoved = $true
             }
         }
+        # Ordnervorschau wieder einschalten (falls Moon sie abgeschaltet hat)
+        $logo = $null
+        try { $logo = (Get-ItemProperty -Path $FolderBagKey -Name 'Logo' -ErrorAction Stop).Logo } catch { }
+        if ($logo -and $logo -like "$LockDir*") {
+            Remove-ItemProperty -Path $FolderBagKey -Name 'Logo' -ErrorAction SilentlyContinue
+            $iconsRemoved = $true
+        }
         if ($iconsRemoved) { Write-Step 'Moon-Ordnersymbole entfernt.' }
         Remove-Item -Path $LockDir -Recurse -Force -ErrorAction SilentlyContinue
     } else {
@@ -128,6 +136,7 @@ if (-not $NoExplorerRestart) {
     if ($iconsRemoved) {
         Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\iconcache_*.db') -Force -ErrorAction SilentlyContinue
         Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'IconCache.db') -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\thumbcache_*.db') -Force -ErrorAction SilentlyContinue
     }
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
 }

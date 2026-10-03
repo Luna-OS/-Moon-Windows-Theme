@@ -5,7 +5,7 @@
 # Hintergrund: Sternenhimmel (wird von GitHub geladen). Fuer den alten lila Glas-Look
 # in den beiden Zeilen mit "Background:=$MoonStars" einfach $MoonStars durch $MoonBg ersetzen.
 styleConstants:
-  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Top" ImageSource="https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Starfield/starfield-menu.jpg"/>
+  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Top" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Starfield/starfield-menu.jpg"/>
   - MoonBg=<WindhawkBlur BlurAmount="30" TintColor="#E6130F28" FallbackColor="#FF130F28"/>
   - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
   - MoonCard=<SolidColorBrush Color="#14B8ABFF"/>

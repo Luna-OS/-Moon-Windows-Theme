@@ -458,6 +458,9 @@ function Write-FolderIconStatus {
     $v = $null
     try { $v = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons' -Name '3' -ErrorAction Stop).'3' } catch { }
     if ($v) { Write-Log "Ordnersymbole: gesetzt ($v)" } else { Write-Log 'Ordnersymbole: NICHT gesetzt' }
+    $logo = $null
+    try { $logo = (Get-ItemProperty -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Logo' -ErrorAction Stop).Logo } catch { }
+    if ($logo) { Write-Log 'Ordnervorschau: aus (Moon-Symbol bleibt sichtbar)' } else { Write-Log 'Ordnervorschau: an (kann das Moon-Symbol überdecken)' }
 }
 
 function Update-WindhawkStatus {
