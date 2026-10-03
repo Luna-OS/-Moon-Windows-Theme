@@ -23,6 +23,24 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 
 ## Installation
 
+### Am einfachsten: Moon Installer (App)
+
+1. Repository als ZIP herunterladen und entpacken.
+2. **`Moon Installer.cmd` doppelklicken** und die Admin-Abfrage bestätigen.
+3. Hintergrund und Taskleiste auswählen → **„Alles installieren“**.
+
+Die App erledigt dann der Reihe nach:
+- **Grund-Theme**: Hintergrund, Dunkelmodus, Akzentfarbe, Titelleisten (ruft `install.ps1` auf)
+- **Windhawk** installieren (über winget), falls noch nicht vorhanden
+- **Mods**:
+  - Mit Windhawk 2.x (hat `windhawk-cli.exe`) werden die Mods komplett automatisch installiert.
+  - Mit Windhawk 1.x öffnet die App Windhawk. Dort klickst du bei jedem angezeigten Mod einmal auf „Install“. Mit „Name kopieren“ findest du ihn schnell.
+- **Moon-Styles eintragen**: Sobald ein Mod installiert ist, schreibt die App den Moon-Style direkt in Windhawk. Kopieren und Einfügen ist nicht nötig.
+
+Mit dem Button „Theme entfernen“ machst du alles wieder rückgängig.
+
+Lieber manuell? Dann so:
+
 ### Schritt 1: Grund-Theme
 
 1. Repository als ZIP herunterladen und entpacken (oder klonen).
@@ -107,6 +125,7 @@ Akzent-Palette (Windows): `#E2DCFF` `#C9BFFF` `#AC9EFF` **`#8E7CFF`** `#6A57E0` 
 ## Projektstruktur
 
 ```
+Moon Installer.cmd               App: richtet alles mit einem Klick ein (app/MoonInstaller.ps1)
 install.ps1 / Install.cmd        Grund-Theme installieren
 uninstall.ps1 / Uninstall.cmd    Alles zurücksetzen
 theme/Moon.theme                 Windows-Theme-Datei
@@ -115,6 +134,7 @@ theme/Starfield/                 Sternenhimmel für Startmenü und Einstellungen
 windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
+tools/build_windhawk_settings.py Erzeugt windhawk/json/ aus den YAML-Styles (pip install pyyaml)
 ```
 
 ## Lizenz

@@ -1,0 +1,20 @@
+{
+  "modId": "translucent-windows",
+  "modName": "Translucent Windows",
+  "label": "Klassische Programme (optional)",
+  "selectedByDefault": false,
+  "source": "windhawk/translucent-windows.yaml",
+  "managedKeys": [
+    "BackgroundEffects",
+    "FlyoutsEffects",
+    "RenderingMod"
+  ],
+  "settings": {
+    "RenderingMod.ThemeBackground": 1,
+    "RenderingMod.SysColors": 0,
+    "RenderingMod.AccentColorControls": 1,
+    "BackgroundEffects.type": "mica",
+    "BackgroundEffects.AccentBlurBehind": "3A130F28",
+    "FlyoutsEffects": 1
+  }
+}
