@@ -359,7 +359,9 @@ foreach ($name in 'WallpaperBox', 'TaskbarBox', 'LockScreenBox', 'FolderIconsBox
 
 function Write-Log([string]$Text) {
     Add-LogLine $Text
-    $ui.LogBox.AppendText("[{0:HH:mm:ss}] {1}`r`n" -f (Get-Date), $Text)
+    # Erst formatieren, dann uebergeben: in Methodenklammern trennt das Komma sonst die Methoden-Argumente
+    $line = "[{0:HH:mm:ss}] {1}" -f (Get-Date), $Text
+    $ui.LogBox.AppendText($line + "`r`n")
     $ui.LogBox.ScrollToEnd()
 }
 
@@ -401,7 +403,7 @@ foreach ($id in $index) {
     $copy.Padding = New-Object System.Windows.Thickness 10, 4, 10, 4
     $copy.Tag = $mod.modName
     $copy.ToolTip = 'Zum Suchen in Windhawk'
-    $copy.Add_Click({ param($s, $e) [System.Windows.Clipboard]::SetText([string]$s.Tag); Write-Log "Kopiert: $($s.Tag)" })
+    $copy.Add_Click({ param($s, $e) try { [System.Windows.Clipboard]::SetText([string]$s.Tag); Write-Log "Kopiert: $($s.Tag)" } catch { } })
 
     [System.Windows.Controls.Grid]::SetColumn($check, 0)
     [System.Windows.Controls.Grid]::SetColumn($status, 1)
@@ -506,6 +508,8 @@ $timer.Add_Tick({
             $step = $script:Queue.Dequeue()
             Write-Log $step.Name
             $proc = & $step.Start $step.Arg
+            # Handle sofort abfragen, sonst liefert Windows PowerShell 5.1 spaeter keinen ExitCode
+            if ($proc -is [System.Diagnostics.Process]) { $null = $proc.Handle } else { $proc = $null }
             $script:Current = @{ Name = $step.Name; Process = $proc; OnDone = $step.OnDone }
             return
         }
@@ -517,7 +521,15 @@ $timer.Add_Tick({
 
 # --- Buttons -----------------------------------------------------------------
 
-$ui.InstallButton.Add_Click({
+# Fehler in Klicks/Ereignissen nur protokollieren, statt die ganze App zu beenden
+function Invoke-Safe([scriptblock]$Body) {
+    try { . $Body } catch {
+        Write-Log "Fehler: $($_.Exception.Message) (Zeile $($_.InvocationInfo.ScriptLineNumber))"
+        $ui.InstallButton.IsEnabled = $true
+    }
+}
+
+$ui.InstallButton.Add_Click({ Invoke-Safe {
     $ui.InstallButton.IsEnabled = $false
     foreach ($m in $script:Mods) { $m.Failed = $false }
 
@@ -569,14 +581,14 @@ $ui.InstallButton.Add_Click({
         $ui.InstallButton.IsEnabled = $true
         return $null
     } $null
-})
+} })
 
-$ui.OpenWindhawkButton.Add_Click({
+$ui.OpenWindhawkButton.Add_Click({ Invoke-Safe {
     $i = Get-WindhawkInfo
     if ($i) { Start-Process -FilePath $i.Exe -ArgumentList '-run-ui' } else { Start-Process 'https://windhawk.net' }
-})
+} })
 
-$ui.UninstallButton.Add_Click({
+$ui.UninstallButton.Add_Click({ Invoke-Safe {
     $r = [System.Windows.MessageBox]::Show(
         "Grund-Theme entfernen und die vorherigen Windows-Einstellungen wiederherstellen?`n`nDie Windhawk-Mods bleiben installiert – die kannst du in Windhawk deaktivieren.",
         'Moon entfernen', 'YesNo', 'Question')
@@ -584,15 +596,15 @@ $ui.UninstallButton.Add_Click({
     Start-Step 'Theme wird entfernt ...' { Start-PowerShellFile (Join-Path $Root 'uninstall.ps1') '' } {
         param($code) $ui.ThemeStatus.Text = 'Theme entfernt.'; Write-Log "uninstall.ps1 beendet (Code $code)."
     }
-})
+} })
 
-$window.Add_ContentRendered({
+$window.Add_ContentRendered({ Invoke-Safe {
     try { [void][MoonInstaller.Native]::ShowWindow([MoonInstaller.Native]::GetConsoleWindow(), 0) } catch { }
+    Write-Log "Moon Installer bereit. Ordner: $Root"
+    if (-not $script:IsAdmin) { Write-Log 'Achtung: ohne Adminrechte gestartet – die Moon-Styles können nicht in Windhawk eingetragen werden.' }
     Update-WindhawkStatus
     Update-ModStatus
     $timer.Start()
-    Write-Log "Moon Installer bereit. Ordner: $Root"
-    if (-not $script:IsAdmin) { Write-Log 'Achtung: ohne Adminrechte gestartet – die Moon-Styles können nicht in Windhawk eingetragen werden.' }
-})
+} })
 
 [void]$window.ShowDialog()
