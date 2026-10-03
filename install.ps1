@@ -238,9 +238,13 @@ if (-not $NoFolderIcons) {
     if (Test-Admin) {
         Write-Step 'Setze Moon-Ordnersymbole ...'
         New-Item -ItemType Directory -Path $IconDir -Force | Out-Null
-        Copy-Item -Path (Join-Path $Root 'theme\Icons\*.ico') -Destination $IconDir -Force
-        Set-RegValue $ShellIconsKey '3' ((Join-Path $IconDir 'moon-folder.ico') + ',0') 'String'
-        Set-RegValue $ShellIconsKey '4' ((Join-Path $IconDir 'moon-folder-open.ico') + ',0') 'String'
+        # Versionsnummer im Dateinamen, damit Windows keine alte Fassung aus dem Symbol-Cache nimmt
+        $closedIcon = Join-Path $IconDir 'moon-folder-v2.ico'
+        $openIcon   = Join-Path $IconDir 'moon-folder-open-v2.ico'
+        Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder.ico') -Destination $closedIcon -Force
+        Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder-open.ico') -Destination $openIcon -Force
+        Set-RegValue $ShellIconsKey '3' ($closedIcon + ',0') 'String'
+        Set-RegValue $ShellIconsKey '4' ($openIcon + ',0') 'String'
         $iconsChanged = $true
     } else {
         Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'
@@ -269,7 +273,17 @@ if (-not $NoExplorerRestart) {
         Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'IconCache.db') -Force -ErrorAction SilentlyContinue
     }
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
-    if ($iconsChanged) { Start-Process -FilePath 'ie4uinit.exe' -ArgumentList '-show' -WindowStyle Hidden -ErrorAction SilentlyContinue }
+    if ($iconsChanged) {
+        # Symbol-Cache neu aufbauen und der Shell melden, dass sich Symbole geaendert haben
+        foreach ($a in '-ClearIconCache', '-show') {
+            try { Start-Process -FilePath 'ie4uinit.exe' -ArgumentList $a -WindowStyle Hidden -Wait -ErrorAction Stop } catch { }
+        }
+        try {
+            Add-Type -Namespace MoonTheme -Name Shell -MemberDefinition '[DllImport("shell32.dll")] public static extern void SHChangeNotify(int wEventId, uint uFlags, System.IntPtr dwItem1, System.IntPtr dwItem2);'
+            [MoonTheme.Shell]::SHChangeNotify(0x08000000, 0, [IntPtr]::Zero, [IntPtr]::Zero)  # SHCNE_ASSOCCHANGED
+        } catch { }
+        Write-Step 'Ordnersymbole gesetzt. Falls noch gelbe Ordner zu sehen sind: einmal ab- und anmelden.'
+    }
 }
 
 Write-Host ''
