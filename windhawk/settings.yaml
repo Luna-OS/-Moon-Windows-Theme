@@ -1,10 +1,12 @@
 # Moon - Windows 11 Settings Styler
 # Windhawk > Windows 11 Settings Styler > Einstellungen > "Textual mode"
 # Gesamten Inhalt einfuegen, "Save settings" klicken und die Einstellungen-App neu oeffnen.
-# Faerbt Menue, Inhaltsbereich, Karten, Startseite, Suchfeld, Symbole, Menues und Dialoge lila.
+# Sternenhimmel als Hintergrund (wird von GitHub geladen); Karten, Startseite, Suchfeld,
+# Symbole, Menues und Dialoge in Moon-Lila.
 styleConstants:
-  - MoonContent=<SolidColorBrush Color="#59130F28"/>
-  - MoonCard=<SolidColorBrush Color="#1FB8ABFF"/>
+  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center" ImageSource="https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Starfield/starfield-settings.jpg"/>
+  - MoonContent=<SolidColorBrush Color="#40130F28"/>
+  - MoonCard=<SolidColorBrush Color="#99211A44"/>
   - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
   - MoonBorder=<SolidColorBrush Color="#598E7CFF"/>
   - MoonBorderSoft=<SolidColorBrush Color="#2E8E7CFF"/>
@@ -13,7 +15,11 @@ styleConstants:
   - Radius=12
   - InnerRadius=8
 controlStyles:
-  # Inhaltsbereich rechts (das Menue links bleibt Mica und wird durch den Moon-Hintergrund lila)
+  # Sternenhimmel hinter dem ganzen Fenster
+  - target: SystemSettings.View.RootPage > Grid#RootPageGrid
+    styles:
+      - Background:=$MoonStars
+  # Inhaltsbereich rechts leicht abgedunkelt, damit Text gut lesbar bleibt
   - target: SplitView#RootSplitView > Grid > Grid#ContentRoot > Border > Grid#ContentGrid
     styles:
       - Background:=$MoonContent
@@ -87,8 +93,8 @@ controlStyles:
       - CornerRadius=$Radius
 themeResourceVariables:
   # Fluent-Farben der Einstellungen-App auf Moon-Lila umstellen (Dunkelmodus)
-  - CardBackgroundFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
-  - CardBackgroundFillColorSecondaryBrush:=<SolidColorBrush Color="#12B8ABFF"/>
+  - CardBackgroundFillColorDefaultBrush:=<SolidColorBrush Color="#99211A44"/>
+  - CardBackgroundFillColorSecondaryBrush:=<SolidColorBrush Color="#80211A44"/>
   - CardStrokeColorDefaultBrush:=<SolidColorBrush Color="#2E8E7CFF"/>
   - ControlFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
   - ControlFillColorSecondaryBrush:=<SolidColorBrush Color="#26B8ABFF"/>
@@ -97,5 +103,5 @@ themeResourceVariables:
   - SubtleFillColorSecondaryBrush:=<SolidColorBrush Color="#1FB8ABFF"/>
   - SubtleFillColorTertiaryBrush:=<SolidColorBrush Color="#14B8ABFF"/>
   - DividerStrokeColorDefaultBrush:=<SolidColorBrush Color="#298E7CFF"/>
-  - LayerFillColorDefaultBrush:=<SolidColorBrush Color="#59130F28"/>
+  - LayerFillColorDefaultBrush:=<SolidColorBrush Color="#40130F28"/>
   - TextFillColorSecondaryBrush:=<SolidColorBrush Color="#D0C8F5"/>

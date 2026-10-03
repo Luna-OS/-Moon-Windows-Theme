@@ -2,7 +2,10 @@
 # Windhawk > Windows 11 Start Menu Styler > Einstellungen > "Textual mode"
 # Gesamten Inhalt einfuegen und "Save settings" klicken.
 # Funktioniert mit dem neuen Startmenue (Angeheftet / Aktuell / Alle) und dem klassischen.
+# Hintergrund: Sternenhimmel (wird von GitHub geladen). Fuer den alten lila Glas-Look
+# in den beiden Zeilen mit "Background:=$MoonStars" einfach $MoonStars durch $MoonBg ersetzen.
 styleConstants:
+  - MoonStars=<ImageBrush Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Top" ImageSource="https://raw.githubusercontent.com/Luna-OS/-Moon-Windows-Theme/main/theme/Starfield/starfield-menu.jpg"/>
   - MoonBg=<WindhawkBlur BlurAmount="30" TintColor="#E6130F28" FallbackColor="#FF130F28"/>
   - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
   - MoonCard=<SolidColorBrush Color="#14B8ABFF"/>
@@ -19,7 +22,7 @@ controlStyles:
   # Hintergrund des Startmenues und der Suche
   - target: Border#AcrylicBorder
     styles:
-      - Background:=$MoonBg
+      - Background:=$MoonStars
       - BorderBrush:=$MoonBorder
       - BorderThickness=1
       - CornerRadius=$Radius
@@ -34,7 +37,7 @@ controlStyles:
       - CornerRadius=$Radius
   - target: Border#AppBorder, Border#AccentAppBorder
     styles:
-      - Background:=$MoonBg
+      - Background:=$MoonStars
       - BorderBrush:=$MoonBorder
       - BorderThickness=1
       - CornerRadius=$Radius

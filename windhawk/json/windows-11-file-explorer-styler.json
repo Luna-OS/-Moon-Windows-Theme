@@ -1,0 +1,37 @@
+{
+  "modId": "windows-11-file-explorer-styler",
+  "modName": "Windows 11 File Explorer Styler",
+  "label": "Explorer",
+  "selectedByDefault": true,
+  "source": "windhawk/file-explorer.yaml",
+  "managedKeys": [
+    "backgroundTranslucentEffect",
+    "controlStyles",
+    "styleConstants",
+    "theme",
+    "themeResourceVariables"
+  ],
+  "settings": {
+    "theme": "",
+    "backgroundTranslucentEffect": "mica",
+    "styleConstants[0]": "MoonPanel=<SolidColorBrush Color=\"#1A8E7CFF\"/>",
+    "styleConstants[1]": "MoonFlyout=<SolidColorBrush Color=\"#FF1A1535\"/>",
+    "styleConstants[2]": "MoonBorder=<SolidColorBrush Color=\"#2E8E7CFF\"/>",
+    "controlStyles[0].target": "FileExplorerExtensions.CommandBarControl_Wave1 > Grid, Grid#CommandBarControlRootGrid",
+    "controlStyles[0].styles[0]": "Background:=$MoonPanel",
+    "controlStyles[0].styles[1]": "BorderBrush:=$MoonBorder",
+    "controlStyles[0].styles[2]": "BorderThickness=0,0,0,1",
+    "controlStyles[1].target": "CommandBar#FileExplorerCommandBar",
+    "controlStyles[1].styles[0]": "Background=Transparent",
+    "controlStyles[2].target": "Grid#NavigationBarControlGrid",
+    "controlStyles[2].styles[0]": "Background:=$MoonPanel",
+    "controlStyles[3].target": "TabViewItem > Grid#LayoutRoot > Canvas > Microsoft.UI.Xaml.Shapes.Path#SelectedBackgroundPath",
+    "controlStyles[3].styles[0]": "Fill:=$MoonPanel",
+    "controlStyles[4].target": "ToolTip",
+    "controlStyles[4].styles[0]": "Background:=$MoonFlyout",
+    "themeResourceVariables[0]": "ControlFillColorDefaultBrush:=<SolidColorBrush Color=\"#1AB8ABFF\"/>",
+    "themeResourceVariables[1]": "ControlFillColorSecondaryBrush:=<SolidColorBrush Color=\"#24B8ABFF\"/>",
+    "themeResourceVariables[2]": "SubtleFillColorSecondaryBrush:=<SolidColorBrush Color=\"#1FB8ABFF\"/>",
+    "themeResourceVariables[3]": "SubtleFillColorTertiaryBrush:=<SolidColorBrush Color=\"#14B8ABFF\"/>"
+  }
+}
