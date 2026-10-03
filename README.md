@@ -4,6 +4,8 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 
 ![Moon-Hintergründe](docs/wallpapers.jpg)
 
+![Moon-Ordnersymbole](docs/folder-icons.png)
+
 ## Was wird umgestylt?
 
 | Bereich | Wie | Datei |
@@ -13,6 +15,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | **Einstellungen-App** (Grundfarben) | Dunkelmodus, lila Akzent (Links, Schalter, Markierungen), lila Mica-Tönung durch den Hintergrund | `install.ps1` |
 | **Einstellungen-App** mit Sternenhimmel (Karten, Startseite, Suchfeld, Symbole, Menüs, Dialoge) | Windhawk-Mod | `windhawk/settings.yaml` |
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
+| **Ordnersymbole** (lila Ordner mit Mondsichel, passend zu Moon Explorer) | Installationsskript (Admin) | `theme/Icons/` |
 | **Startmenü** mit Sternenhimmel (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
 | **Taskleiste**, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
 | Infocenter: Benachrichtigungen, Kalender, Schnelleinstellungen, Medien, Sprunglisten | Windhawk-Mod | `windhawk/notification-center.yaml` |
@@ -30,7 +33,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 3. Hintergrund und Taskleiste auswählen → **„Alles installieren“**.
 
 Die App erledigt dann der Reihe nach:
-- **Grund-Theme**: Hintergrund, Dunkelmodus, Akzentfarbe, Titelleisten (ruft `install.ps1` auf)
+- **Grund-Theme**: Hintergrund, Dunkelmodus, Akzentfarbe, Titelleisten, Moon-Ordnersymbole (ruft `install.ps1` auf)
 - **Windhawk** installieren (über winget), falls noch nicht vorhanden
 - **Mods**:
   - Mit Windhawk 2.x (hat `windhawk-cli.exe`) werden die Mods komplett automatisch installiert.
@@ -38,6 +41,8 @@ Die App erledigt dann der Reihe nach:
 - **Moon-Styles eintragen**: Sobald ein Mod installiert ist, schreibt die App den Moon-Style direkt in Windhawk. Kopieren und Einfügen ist nicht nötig.
 
 Mit dem Button „Theme entfernen“ machst du alles wieder rückgängig.
+
+Falls sich der Installer sofort wieder schließt: Fehler werden jetzt als Meldung angezeigt und in `%TEMP%\MoonInstaller.log` gespeichert.
 
 Lieber manuell? Dann so:
 
@@ -56,6 +61,7 @@ Optionen (in PowerShell im Ordner ausführen):
 .\install.ps1 -Slideshow                 # alle 30 min wechseln
 .\install.ps1 -TaskbarAlignment Left     # Taskleisten-Symbole links
 .\install.ps1 -NoAccentOnTaskbar         # Taskleiste nicht lila einfärben
+.\install.ps1 -NoFolderIcons             # gelbe Standard-Ordner behalten
 .\install.ps1 -LockScreen                # auch Sperrbildschirm (PowerShell als Admin)
 .\install.ps1 -InstallWindhawk           # Windhawk gleich mitinstallieren
 ```
@@ -91,6 +97,7 @@ Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen od
 
 ### Schritt 3 (optional): Feinschliff
 
+- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). In der Großsymbol-Ansicht zeigt Windows bei Ordnern mit Bildern manchmal weiterhin eine Vorschau.
 - **Lila Mauszeiger**: Einstellungen → Barrierefreiheit → Mauszeiger und Toucheingabe → Stil „Benutzerdefiniert“ → Farbe `#B8ABFF`.
 - **Windows Terminal**: Inhalt von `extras/windows-terminal-moon.json` in der `settings.json` unter `"schemes"` einfügen und im Profil `"colorScheme": "Moon"` setzen.
 
@@ -131,10 +138,12 @@ uninstall.ps1 / Uninstall.cmd    Alles zurücksetzen
 theme/Moon.theme                 Windows-Theme-Datei
 theme/Wallpapers/                Hintergründe (4K)
 theme/Starfield/                 Sternenhimmel für Startmenü und Einstellungen
+theme/Icons/                     Moon-Ordnersymbole (.ico)
 windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
 tools/build_windhawk_settings.py Erzeugt windhawk/json/ aus den YAML-Styles (pip install pyyaml)
+tools/generate_icons.py          Erzeugt die Ordnersymbole neu (pip install pillow numpy)
 ```
 
 ## Lizenz

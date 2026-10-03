@@ -40,6 +40,9 @@ param(
     # Installiert Windhawk ueber winget.
     [switch]$InstallWindhawk,
 
+    # Moon-Ordnersymbole NICHT setzen (sie benoetigen Administratorrechte).
+    [switch]$NoFolderIcons,
+
     # Explorer am Ende nicht neu starten.
     [switch]$NoExplorerRestart
 )
@@ -50,6 +53,7 @@ $Root      = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ThemeDir  = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Themes\Moon'
 $Backup    = Join-Path $ThemeDir 'backup.json'
 $LockDir   = Join-Path $env:ProgramData 'MoonTheme'
+$IconDir   = Join-Path $LockDir 'Icons'
 
 # --- Moon-Farbpalette -------------------------------------------------------
 # Reihenfolge wie bei Windows: Light3, Light2, Light1, Akzent, Dark1, Dark2, Dark3, Extra
@@ -62,6 +66,7 @@ $AccentKey      = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Acce
 $AdvancedKey    = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
 $ThemesKey      = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes'
 $LockKey        = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+$ShellIconsKey  = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons'
 
 function Write-Step([string]$Text) { Write-Host "  > $Text" -ForegroundColor Magenta }
 
@@ -166,6 +171,8 @@ if (-not (Test-Path $Backup)) {
         Get-RegEntry $AccentKey      'AccentColorMenu'       'DWord'
         Get-RegEntry $AccentKey      'StartColorMenu'        'DWord'
         Get-RegEntry $AdvancedKey    'TaskbarAl'             'DWord'
+        Get-RegEntry $ShellIconsKey  '3'                     'String'
+        Get-RegEntry $ShellIconsKey  '4'                     'String'
     )
     $entries | ConvertTo-Json -Depth 3 | Set-Content -Path $Backup -Encoding UTF8
 } else {
@@ -225,6 +232,21 @@ if ($LockScreen) {
     }
 }
 
+# 6b) Moon-Ordnersymbole (Admin): ersetzt das gelbe Standard-Ordnersymbol im ganzen System
+$iconsChanged = $false
+if (-not $NoFolderIcons) {
+    if (Test-Admin) {
+        Write-Step 'Setze Moon-Ordnersymbole ...'
+        New-Item -ItemType Directory -Path $IconDir -Force | Out-Null
+        Copy-Item -Path (Join-Path $Root 'theme\Icons\*.ico') -Destination $IconDir -Force
+        Set-RegValue $ShellIconsKey '3' ((Join-Path $IconDir 'moon-folder.ico') + ',0') 'String'
+        Set-RegValue $ShellIconsKey '4' ((Join-Path $IconDir 'moon-folder-open.ico') + ',0') 'String'
+        $iconsChanged = $true
+    } else {
+        Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'
+    }
+}
+
 # 7) Windhawk (optional)
 if ($InstallWindhawk) {
     if (Get-Command winget -ErrorAction SilentlyContinue) {
@@ -241,7 +263,13 @@ if (-not $NoExplorerRestart) {
     Stop-Process -Name StartMenuExperienceHost -Force -ErrorAction SilentlyContinue
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 2
+    if ($iconsChanged) {
+        # Symbol-Cache leeren, damit die neuen Ordnersymbole sofort erscheinen
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\iconcache_*.db') -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'IconCache.db') -Force -ErrorAction SilentlyContinue
+    }
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
+    if ($iconsChanged) { Start-Process -FilePath 'ie4uinit.exe' -ArgumentList '-show' -WindowStyle Hidden -ErrorAction SilentlyContinue }
 }
 
 Write-Host ''

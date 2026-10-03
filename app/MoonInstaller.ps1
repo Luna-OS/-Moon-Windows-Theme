@@ -19,12 +19,41 @@ $ErrorActionPreference = 'Stop'
 $AppDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Root    = Split-Path -Parent $AppDir
 $JsonDir = Join-Path $Root 'windhawk\json'
+$LogFile = Join-Path $env:TEMP 'MoonInstaller.log'
+
+function Add-LogLine([string]$Text) {
+    try { Add-Content -Path $LogFile -Value ("[{0:yyyy-MM-dd HH:mm:ss}] {1}" -f (Get-Date), $Text) -Encoding UTF8 } catch { }
+}
+
+# Zeigt einen Absturz sichtbar an, statt dass sich das Fenster einfach schliesst
+function Show-Fatal($ErrorRecord) {
+    $msg = "$($ErrorRecord.Exception.Message)`r`n`r`n$($ErrorRecord.InvocationInfo.PositionMessage)`r`n$($ErrorRecord.ScriptStackTrace)"
+    Add-LogLine "ABSTURZ: $msg"
+    Write-Host ''
+    Write-Host '  Der Moon Installer ist abgestuerzt:' -ForegroundColor Red
+    Write-Host "  $msg"
+    Write-Host "  Log: $LogFile"
+    try {
+        Add-Type -AssemblyName PresentationFramework
+        [void][System.Windows.MessageBox]::Show(
+            "Der Moon Installer ist abgestürzt.`n`n$($ErrorRecord.Exception.Message)`n`nZeile $($ErrorRecord.InvocationInfo.ScriptLineNumber)`n`nDetails stehen in:`n$LogFile",
+            'Moon Installer', 'OK', 'Error')
+    } catch { }
+    Read-Host '  Enter druecken zum Schliessen' | Out-Null
+}
+
+trap {
+    Show-Fatal $_
+    exit 1
+}
+
+Add-LogLine "Start (PowerShell $($PSVersionTable.PSVersion), $([Environment]::OSVersion.VersionString))"
 
 # --- Als Administrator neu starten (Windhawk speichert seine Einstellungen in HKLM) ---
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $script:IsAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $NoElevate -and -not $script:IsAdmin) {
-    $elevArgs = "-NoProfile -ExecutionPolicy Bypass -STA -WindowStyle Hidden -File `"$PSCommandPath`""
+    $elevArgs = "-NoProfile -ExecutionPolicy Bypass -STA -File `"$PSCommandPath`""
     try {
         Start-Process -FilePath 'powershell.exe' -ArgumentList $elevArgs -Verb RunAs
         exit
@@ -34,6 +63,17 @@ if (-not $NoElevate -and -not $script:IsAdmin) {
 }
 
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+
+$script:BrushConverter = New-Object System.Windows.Media.BrushConverter
+function Get-Brush([string]$Hex) { $script:BrushConverter.ConvertFromString($Hex) }
+
+# Konsolenfenster ausblenden, sobald die App laeuft (bei Fehlern bleibt es sichtbar)
+try {
+    Add-Type -Namespace MoonInstaller -Name Native -MemberDefinition @'
+[DllImport("kernel32.dll")] public static extern System.IntPtr GetConsoleWindow();
+[DllImport("user32.dll")] public static extern bool ShowWindow(System.IntPtr hWnd, int nCmdShow);
+'@
+} catch { }
 
 # =============================================================================
 #  Windhawk-Zugriff
@@ -238,7 +278,7 @@ function Set-MoonSettings($Info, $Mod) {
     <StackPanel Grid.Row="0" Margin="0,0,0,16">
       <TextBlock FontSize="28" FontWeight="SemiBold"><Run Text="&#x1F319; "/><Run Text="Moon Installer" Foreground="#EEEAFF"/></TextBlock>
       <TextBlock Foreground="{StaticResource Dim}" Margin="0,4,0,0" TextWrapping="Wrap"
-                 Text="Richtet das komplette Moon-Theme ein: Hintergrund, Farben, Startmenü, Taskleiste, Infocenter, Explorer und Einstellungen."/>
+                 Text="Richtet das komplette Moon-Theme ein: Hintergrund, Farben, Ordnersymbole, Startmenü, Taskleiste, Infocenter, Explorer und Einstellungen."/>
     </StackPanel>
 
     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -263,7 +303,10 @@ function Set-MoonSettings($Info, $Mod) {
                   <ComboBoxItem Content="Symbole links" Tag="Left"/>
                 </ComboBox>
               </StackPanel>
-              <CheckBox x:Name="LockScreenBox" Content="Auch Sperrbildschirm" Margin="0,16,0,0"/>
+              <StackPanel Margin="0,4,0,0">
+                <CheckBox x:Name="FolderIconsBox" Content="Moon-Ordnersymbole" IsChecked="True" Margin="0,0,0,6"/>
+                <CheckBox x:Name="LockScreenBox" Content="Auch Sperrbildschirm"/>
+              </StackPanel>
             </WrapPanel>
             <TextBlock x:Name="ThemeStatus" Foreground="{StaticResource Dim}" Margin="0,8,0,0" Text="Bereit."/>
           </StackPanel>
@@ -305,14 +348,17 @@ function Set-MoonSettings($Info, $Mod) {
 </Window>
 '@
 
+Add-LogLine 'Lade Oberflaeche ...'
 $window = [Windows.Markup.XamlReader]::Load((New-Object System.Xml.XmlNodeReader $xaml))
+Add-LogLine 'Oberflaeche geladen.'
 $ui = @{}
-foreach ($name in 'WallpaperBox', 'TaskbarBox', 'LockScreenBox', 'ThemeStatus', 'WindhawkStatus', 'ModsHint',
+foreach ($name in 'WallpaperBox', 'TaskbarBox', 'LockScreenBox', 'FolderIconsBox', 'ThemeStatus', 'WindhawkStatus', 'ModsHint',
                   'ModsPanel', 'LogBox', 'UninstallButton', 'OpenWindhawkButton', 'InstallButton') {
     $ui[$name] = $window.FindName($name)
 }
 
 function Write-Log([string]$Text) {
+    Add-LogLine $Text
     $ui.LogBox.AppendText("[{0:HH:mm:ss}] {1}`r`n" -f (Get-Date), $Text)
     $ui.LogBox.ScrollToEnd()
 }
@@ -324,8 +370,12 @@ foreach ($id in $index) {
     $mod = Get-Content -Path (Join-Path $JsonDir "$id.json") -Raw -Encoding UTF8 | ConvertFrom-Json
 
     $row = New-Object System.Windows.Controls.Grid
-    $row.Margin = '0,0,0,8'
-    foreach ($w in '*', 'Auto', 'Auto') {
+    $row.Margin = New-Object System.Windows.Thickness 0, 0, 0, 8
+    $widths = @(
+        (New-Object System.Windows.GridLength 1, ([System.Windows.GridUnitType]::Star)),
+        [System.Windows.GridLength]::Auto,
+        [System.Windows.GridLength]::Auto)
+    foreach ($w in $widths) {
         $cd = New-Object System.Windows.Controls.ColumnDefinition
         $cd.Width = $w
         [void]$row.ColumnDefinitions.Add($cd)
@@ -335,20 +385,20 @@ foreach ($id in $index) {
     $label = New-Object System.Windows.Controls.TextBlock
     $label.Inlines.Add((New-Object System.Windows.Documents.Run ($mod.label + '  ')))
     $sub = New-Object System.Windows.Documents.Run $mod.modName
-    $sub.Foreground = '#ABA3D6'
+    $sub.Foreground = (Get-Brush '#ABA3D6')
     $sub.FontSize = 12
     $label.Inlines.Add($sub)
     $check.Content = $label
 
     $status = New-Object System.Windows.Controls.TextBlock
-    $status.Margin = '12,0,12,0'
-    $status.VerticalAlignment = 'Center'
+    $status.Margin = New-Object System.Windows.Thickness 12, 0, 12, 0
+    $status.VerticalAlignment = [System.Windows.VerticalAlignment]::Center
     $status.Text = '…'
 
     $copy = New-Object System.Windows.Controls.Button
     $copy.Content = 'Name kopieren'
     $copy.FontSize = 12
-    $copy.Padding = '10,4'
+    $copy.Padding = New-Object System.Windows.Thickness 10, 4, 10, 4
     $copy.Tag = $mod.modName
     $copy.ToolTip = 'Zum Suchen in Windhawk'
     $copy.Add_Click({ param($s, $e) [System.Windows.Clipboard]::SetText([string]$s.Tag); Write-Log "Kopiert: $($s.Tag)" })
@@ -402,28 +452,28 @@ function Update-WindhawkStatus {
 function Update-ModStatus {
     $i = $script:Info
     foreach ($m in $script:Mods) {
-        if (-not $m.Check.IsChecked) { $m.Status.Text = 'übersprungen'; $m.Status.Foreground = '#6F6894'; continue }
-        if (-not $i -or $i.Portable) { $m.Status.Text = '–'; $m.Status.Foreground = '#ABA3D6'; continue }
+        if (-not $m.Check.IsChecked) { $m.Status.Text = 'übersprungen'; $m.Status.Foreground = (Get-Brush '#6F6894'); continue }
+        if (-not $i -or $i.Portable) { $m.Status.Text = '–'; $m.Status.Foreground = (Get-Brush '#ABA3D6'); continue }
         if (-not (Test-ModInstalled $i $m.Data.modId)) {
-            $m.Status.Text = '○  Mod nicht installiert'; $m.Status.Foreground = '#ABA3D6'; continue
+            $m.Status.Text = '○  Mod nicht installiert'; $m.Status.Foreground = (Get-Brush '#ABA3D6'); continue
         }
         if ($m.Applied -or (Test-MoonApplied $i $m.Data)) {
             $m.Applied = $true
-            $m.Status.Text = '✓  Moon-Style aktiv'; $m.Status.Foreground = '#8EE3C0'; continue
+            $m.Status.Text = '✓  Moon-Style aktiv'; $m.Status.Foreground = (Get-Brush '#8EE3C0'); continue
         }
         if ($script:Watching -and -not $m.Failed) {
             try {
                 Set-MoonSettings $i $m.Data
                 $m.Applied = $true
-                $m.Status.Text = '✓  Moon-Style aktiv'; $m.Status.Foreground = '#8EE3C0'
+                $m.Status.Text = '✓  Moon-Style aktiv'; $m.Status.Foreground = (Get-Brush '#8EE3C0')
                 Write-Log "Moon-Style eingetragen: $($m.Data.modName)"
             } catch {
                 $m.Failed = $true
-                $m.Status.Text = '⚠  Fehler'; $m.Status.Foreground = '#FF9DB6'
+                $m.Status.Text = '⚠  Fehler'; $m.Status.Foreground = (Get-Brush '#FF9DB6')
                 Write-Log "Fehler bei $($m.Data.modName): $($_.Exception.Message)"
             }
         } else {
-            $m.Status.Text = '●  installiert, Style fehlt'; $m.Status.Foreground = '#F5D78E'
+            $m.Status.Text = '●  installiert, Style fehlt'; $m.Status.Foreground = (Get-Brush '#F5D78E')
         }
     }
 
@@ -476,6 +526,7 @@ $ui.InstallButton.Add_Click({
     $argList = if ($wall -eq 'slideshow') { '-Slideshow' } else { "-Wallpaper $wall" }
     $argList += " -TaskbarAlignment $($ui.TaskbarBox.SelectedItem.Tag)"
     if ($ui.LockScreenBox.IsChecked) { $argList += ' -LockScreen' }
+    if (-not $ui.FolderIconsBox.IsChecked) { $argList += ' -NoFolderIcons' }
     $ui.ThemeStatus.Text = 'Wird angewendet ... (die Einstellungen gehen kurz auf und zu)'
     Start-Step 'Grund-Theme wird angewendet ...' { param($a) Start-PowerShellFile (Join-Path $Root 'install.ps1') $a } {
         param($code)
@@ -536,6 +587,7 @@ $ui.UninstallButton.Add_Click({
 })
 
 $window.Add_ContentRendered({
+    try { [void][MoonInstaller.Native]::ShowWindow([MoonInstaller.Native]::GetConsoleWindow(), 0) } catch { }
     Update-WindhawkStatus
     Update-ModStatus
     $timer.Start()

@@ -22,6 +22,7 @@ $ThemeDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Themes\Moon'
 $Backup   = Join-Path $ThemeDir 'backup.json'
 $LockDir  = Join-Path $env:ProgramData 'MoonTheme'
 $LockKey  = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'
+$ShellIconsKey = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons'
 
 function Write-Step([string]$Text) { Write-Host "  > $Text" -ForegroundColor Magenta }
 
@@ -87,16 +88,28 @@ foreach ($e in $entries) {
     }
 }
 
-# 3) Sperrbildschirm
+# 3) Sperrbildschirm und Ordnersymbole (liegen beide in %ProgramData%\MoonTheme)
+$iconsRemoved = $false
 if (Test-Path $LockDir) {
     if (Test-Admin) {
-        Write-Step 'Entferne Moon-Sperrbildschirm ...'
-        foreach ($name in 'LockScreenImagePath', 'LockScreenImageUrl', 'LockScreenImageStatus') {
-            Remove-ItemProperty -Path $LockKey -Name $name -ErrorAction SilentlyContinue
+        if (Test-Path (Join-Path $LockDir 'lockscreen.jpg')) {
+            Write-Step 'Entferne Moon-Sperrbildschirm ...'
+            foreach ($name in 'LockScreenImagePath', 'LockScreenImageUrl', 'LockScreenImageStatus') {
+                Remove-ItemProperty -Path $LockKey -Name $name -ErrorAction SilentlyContinue
+            }
         }
+        foreach ($name in '3', '4') {
+            $value = $null
+            try { $value = (Get-ItemProperty -Path $ShellIconsKey -Name $name -ErrorAction Stop).$name } catch { }
+            if ($value -and $value -like "$LockDir*") {
+                Remove-ItemProperty -Path $ShellIconsKey -Name $name -ErrorAction SilentlyContinue
+                $iconsRemoved = $true
+            }
+        }
+        if ($iconsRemoved) { Write-Step 'Moon-Ordnersymbole entfernt.' }
         Remove-Item -Path $LockDir -Recurse -Force -ErrorAction SilentlyContinue
     } else {
-        Write-Warning 'Der Moon-Sperrbildschirm ist gesetzt. Zum Entfernen uninstall.ps1 als Administrator ausfuehren.'
+        Write-Warning 'Sperrbildschirm bzw. Ordnersymbole von Moon sind gesetzt. Zum Entfernen uninstall.ps1 als Administrator ausfuehren.'
     }
 }
 
@@ -112,6 +125,10 @@ if (-not $NoExplorerRestart) {
     Stop-Process -Name StartMenuExperienceHost -Force -ErrorAction SilentlyContinue
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 2
+    if ($iconsRemoved) {
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Explorer\iconcache_*.db') -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path (Join-Path $env:LOCALAPPDATA 'IconCache.db') -Force -ErrorAction SilentlyContinue
+    }
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
 }
 
