@@ -3,3 +3,4 @@
 *.theme text eol=crlf
 *.jpg   binary
 *.png   binary
+*.ico   binary
