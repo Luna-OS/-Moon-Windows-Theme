@@ -461,7 +461,9 @@ function Write-FolderIconStatus {
     if ($v) { Write-Log "Ordnersymbole: gesetzt ($v)" } else { Write-Log 'Ordnersymbole: NICHT gesetzt' }
     $logo = $null
     try { $logo = (Get-ItemProperty -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Logo' -ErrorAction Stop).Logo } catch { }
-    if ($logo) { Write-Log 'Ordnervorschau: aus (Moon-Symbol bleibt sichtbar)' } else { Write-Log 'Ordnervorschau: an (kann das Moon-Symbol überdecken)' }
+    if ($logo -and (Test-Path $logo)) { Write-Log "Ordner-Vorlage (Desktop, große Symbole): Moon ($logo)" }
+    elseif ($logo) { Write-Log 'Ordner-Vorlage: zeigt auf eine fehlende Datei – bitte erneut installieren' }
+    else { Write-Log 'Ordner-Vorlage: Windows-Standard (große Ordner bleiben gelb)' }
 }
 
 function Update-WindhawkStatus {

@@ -276,10 +276,12 @@ if (-not $NoFolderIcons) {
         Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder-open.ico') -Destination $openIcon -Force
         Set-RegValue $ShellIconsKey '3' ($closedIcon + ',0') 'String'
         Set-RegValue $ShellIconsKey '4' ($openIcon + ',0') 'String'
-        # Ordnervorschau (Inhalt im gelben Ordner) abschalten, sonst ersetzt Windows das Moon-Symbol
-        # kurz nach dem Anzeigen wieder. Die Vorlage zeigt absichtlich auf eine NICHT vorhandene Datei;
-        # Vorschaubilder von Fotos/Videos bleiben erhalten.
-        Set-RegValue $FolderBagKey 'Logo' (Join-Path $LockDir 'no-folder-preview.jpg') 'String'
+        # Ab mittlerer Symbolgroesse (z. B. Desktop) nutzt Windows 11 nicht Shell Icons, sondern eine
+        # Ordner-Vorlage. Die wird hier auf den Moon-Ordner gesetzt (gilt fuer alle Ordner, Vorschaubilder
+        # von Fotos/Videos bleiben erhalten). Neuer Dateiname je Version, damit kein Cache greift.
+        $folderThumb = Join-Path $IconDir 'moon-folder-thumb-v3.png'
+        Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder-thumb.png') -Destination $folderThumb -Force
+        Set-RegValue $FolderBagKey 'Logo' $folderThumb 'String'
         $iconsChanged = $true
     } else {
         Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'

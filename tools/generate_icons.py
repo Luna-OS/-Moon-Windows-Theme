@@ -186,6 +186,9 @@ def main():
     draw_start_logo().save(OUT / "moon-start.png", optimize=True)
     for name, rgba in START_TILES.items():
         draw_start_tile(rgba).save(OUT / name, optimize=True)
+    # Vorlage fuer Ordner ab mittlerer Symbolgroesse (Desktop, mittlere/grosse Symbole):
+    # Windows 11 zeichnet dort nicht das Shell-Icon, sondern diese Vorlage.
+    draw_folder(256, opened=False).save(OUT / "moon-folder-thumb.png", optimize=True)
     closed = save_ico("moon-folder.ico", opened=False)
     opened = save_ico("moon-folder-open.ico", opened=True)
     # Vorschau auf dunklem und hellem Hintergrund
