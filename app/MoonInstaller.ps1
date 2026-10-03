@@ -432,9 +432,32 @@ function Start-Step([string]$Name, [scriptblock]$Start, [scriptblock]$OnDone, $A
     $script:Queue.Enqueue(@{ Name = $Name; Start = $Start; OnDone = $OnDone; Arg = $Arg })
 }
 
+$script:StepOut = Join-Path $env:TEMP 'MoonInstaller-step.out.txt'
+$script:StepErr = Join-Path $env:TEMP 'MoonInstaller-step.err.txt'
+
+# Startet ein Skript; seine Ausgabe landet in Dateien und wird danach ins Protokoll uebernommen
 function Start-PowerShellFile([string]$File, [string]$Arguments) {
-    Start-Process -FilePath 'powershell.exe' -PassThru -WindowStyle Hidden `
+    Remove-Item -Path $script:StepOut, $script:StepErr -Force -ErrorAction SilentlyContinue
+    Start-Process -FilePath 'powershell.exe' -PassThru -NoNewWindow `
+        -RedirectStandardOutput $script:StepOut -RedirectStandardError $script:StepErr `
         -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$File`" $Arguments"
+}
+
+function Write-StepOutput {
+    foreach ($f in $script:StepOut, $script:StepErr) {
+        if (Test-Path $f) {
+            foreach ($line in Get-Content -Path $f -ErrorAction SilentlyContinue) {
+                $t = ($line -replace "$([char]27)\[[0-9;]*m", '').Trim()
+                if ($t -and $t -notmatch '^=+$') { Write-Log "   $t" }
+            }
+        }
+    }
+}
+
+function Write-FolderIconStatus {
+    $v = $null
+    try { $v = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons' -Name '3' -ErrorAction Stop).'3' } catch { }
+    if ($v) { Write-Log "Ordnersymbole: gesetzt ($v)" } else { Write-Log 'Ordnersymbole: NICHT gesetzt' }
 }
 
 function Update-WindhawkStatus {
@@ -542,8 +565,10 @@ $ui.InstallButton.Add_Click({ Invoke-Safe {
     $ui.ThemeStatus.Text = 'Wird angewendet ... (die Einstellungen gehen kurz auf und zu)'
     Start-Step 'Grund-Theme wird angewendet ...' { param($a) Start-PowerShellFile (Join-Path $Root 'install.ps1') $a } {
         param($code)
+        Write-StepOutput
         if ($code -eq 0) { $ui.ThemeStatus.Text = '✓  Grund-Theme ist aktiv.'; Write-Log 'Grund-Theme fertig.' }
         else { $ui.ThemeStatus.Text = "⚠  install.ps1 meldete Fehlercode $code."; Write-Log "install.ps1 Fehlercode $code" }
+        Write-FolderIconStatus
     } $argList
 
     # 2) Windhawk
@@ -594,7 +619,7 @@ $ui.UninstallButton.Add_Click({ Invoke-Safe {
         'Moon entfernen', 'YesNo', 'Question')
     if ($r -ne 'Yes') { return }
     Start-Step 'Theme wird entfernt ...' { Start-PowerShellFile (Join-Path $Root 'uninstall.ps1') '' } {
-        param($code) $ui.ThemeStatus.Text = 'Theme entfernt.'; Write-Log "uninstall.ps1 beendet (Code $code)."
+        param($code) Write-StepOutput; $ui.ThemeStatus.Text = 'Theme entfernt.'; Write-Log "uninstall.ps1 beendet (Code $code)."
     }
 } })
 

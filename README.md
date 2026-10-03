@@ -17,7 +17,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
 | **Ordnersymbole** (lila Ordner mit Mondsichel, passend zu Moon Explorer) | Installationsskript (Admin) | `theme/Icons/` |
 | **Startmenü** mit Sternenhimmel (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
-| **Taskleiste**, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
+| **Taskleiste** mit Moon-Start-Logo, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
 | Infocenter: Benachrichtigungen, Kalender, Schnelleinstellungen, Medien, Sprunglisten | Windhawk-Mod | `windhawk/notification-center.yaml` |
 | Explorer | Windhawk-Mod | `windhawk/file-explorer.yaml` |
 | Klassische Programme und Kontextmenüs (optional) | Windhawk-Mod | `windhawk/translucent-windows.yaml` |
@@ -138,7 +138,7 @@ uninstall.ps1 / Uninstall.cmd    Alles zurücksetzen
 theme/Moon.theme                 Windows-Theme-Datei
 theme/Wallpapers/                Hintergründe (4K)
 theme/Starfield/                 Sternenhimmel für Startmenü und Einstellungen
-theme/Icons/                     Moon-Ordnersymbole (.ico)
+theme/Icons/                     Moon-Ordnersymbole (.ico) und Start-Logo (moon-start.png)
 windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
