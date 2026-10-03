@@ -1,0 +1,32 @@
+# Moon - Windows 11 File Explorer Styler
+# Windhawk > Windows 11 File Explorer Styler > Einstellungen > "Textual mode"
+# Gesamten Inhalt einfuegen und "Save settings" klicken.
+# Mica nimmt die Farbe des Moon-Hintergrunds auf, dadurch wird der Explorer lila getoent.
+backgroundTranslucentEffect: mica
+styleConstants:
+  - MoonPanel=<SolidColorBrush Color="#1A8E7CFF"/>
+  - MoonFlyout=<SolidColorBrush Color="#FF1A1535"/>
+  - MoonBorder=<SolidColorBrush Color="#2E8E7CFF"/>
+controlStyles:
+  - target: FileExplorerExtensions.CommandBarControl_Wave1 > Grid, Grid#CommandBarControlRootGrid
+    styles:
+      - Background:=$MoonPanel
+      - BorderBrush:=$MoonBorder
+      - BorderThickness=0,0,0,1
+  - target: CommandBar#FileExplorerCommandBar
+    styles:
+      - Background=Transparent
+  - target: Grid#NavigationBarControlGrid
+    styles:
+      - Background:=$MoonPanel
+  - target: TabViewItem > Grid#LayoutRoot > Canvas > Microsoft.UI.Xaml.Shapes.Path#SelectedBackgroundPath
+    styles:
+      - Fill:=$MoonPanel
+  - target: ToolTip
+    styles:
+      - Background:=$MoonFlyout
+themeResourceVariables:
+  - ControlFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
+  - ControlFillColorSecondaryBrush:=<SolidColorBrush Color="#24B8ABFF"/>
+  - SubtleFillColorSecondaryBrush:=<SolidColorBrush Color="#1FB8ABFF"/>
+  - SubtleFillColorTertiaryBrush:=<SolidColorBrush Color="#14B8ABFF"/>

@@ -1,0 +1,12 @@
+# Moon - Translucent Windows (optional)
+# Windhawk > Translucent Windows > Einstellungen > "Textual mode"
+# Gibt klassischen Programmen (Systemsteuerung, Dialoge, Kontextmenues) Mica,
+# damit sie wie die Einstellungen-App lila getoent werden.
+RenderingMod:
+  ThemeBackground: 1
+  SysColors: 0
+  AccentColorControls: 1
+BackgroundEffects:
+  type: mica
+  AccentBlurBehind: "3A130F28"
+FlyoutsEffects: 1
