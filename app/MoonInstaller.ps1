@@ -278,7 +278,7 @@ function Set-MoonSettings($Info, $Mod) {
     <StackPanel Grid.Row="0" Margin="0,0,0,16">
       <TextBlock FontSize="28" FontWeight="SemiBold"><Run Text="&#x1F319; "/><Run Text="Moon Installer" Foreground="#EEEAFF"/></TextBlock>
       <TextBlock Foreground="{StaticResource Dim}" Margin="0,4,0,0" TextWrapping="Wrap"
-                 Text="Richtet das komplette Moon-Theme ein: Hintergrund, Farben, Ordnersymbole, Startmenü, Taskleiste, Infocenter, Explorer und Einstellungen."/>
+                 Text="Richtet das komplette Moon-Theme ein: Hintergrund, Farben, Ordnersymbole, Sounds, Startmenü, Taskleiste, Infocenter, Explorer und Einstellungen."/>
     </StackPanel>
 
     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -305,6 +305,7 @@ function Set-MoonSettings($Info, $Mod) {
               </StackPanel>
               <StackPanel Margin="0,4,0,0">
                 <CheckBox x:Name="FolderIconsBox" Content="Moon-Ordnersymbole" IsChecked="True" Margin="0,0,0,6"/>
+                <CheckBox x:Name="SoundsBox" Content="Moon-Sounds" IsChecked="True" Margin="0,0,0,6"/>
                 <CheckBox x:Name="LockScreenBox" Content="Auch Sperrbildschirm"/>
               </StackPanel>
             </WrapPanel>
@@ -352,7 +353,7 @@ Add-LogLine 'Lade Oberflaeche ...'
 $window = [Windows.Markup.XamlReader]::Load((New-Object System.Xml.XmlNodeReader $xaml))
 Add-LogLine 'Oberflaeche geladen.'
 $ui = @{}
-foreach ($name in 'WallpaperBox', 'TaskbarBox', 'LockScreenBox', 'FolderIconsBox', 'ThemeStatus', 'WindhawkStatus', 'ModsHint',
+foreach ($name in 'WallpaperBox', 'TaskbarBox', 'LockScreenBox', 'FolderIconsBox', 'SoundsBox', 'ThemeStatus', 'WindhawkStatus', 'ModsHint',
                   'ModsPanel', 'LogBox', 'UninstallButton', 'OpenWindhawkButton', 'InstallButton') {
     $ui[$name] = $window.FindName($name)
 }
@@ -565,6 +566,7 @@ $ui.InstallButton.Add_Click({ Invoke-Safe {
     $argList += " -TaskbarAlignment $($ui.TaskbarBox.SelectedItem.Tag)"
     if ($ui.LockScreenBox.IsChecked) { $argList += ' -LockScreen' }
     if (-not $ui.FolderIconsBox.IsChecked) { $argList += ' -NoFolderIcons' }
+    if (-not $ui.SoundsBox.IsChecked) { $argList += ' -NoSounds' }
     $ui.ThemeStatus.Text = 'Wird angewendet ... (die Einstellungen gehen kurz auf und zu)'
     Start-Step 'Grund-Theme wird angewendet ...' { param($a) Start-PowerShellFile (Join-Path $Root 'install.ps1') $a } {
         param($code)

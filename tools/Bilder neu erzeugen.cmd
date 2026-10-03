@@ -20,6 +20,7 @@ python -m pip install --quiet pillow numpy pyyaml
 echo   Erzeuge Bilder ...
 python "%~dp0generate_wallpapers.py"
 python "%~dp0generate_icons.py"
+python "%~dp0generate_sounds.py"
 python "%~dp0build_windhawk_settings.py"
 echo.
 echo   Fertig.
