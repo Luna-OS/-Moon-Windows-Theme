@@ -1,0 +1,23 @@
+{
+    "name": "Moon",
+    "background": "#130F28",
+    "foreground": "#EEEAFF",
+    "cursorColor": "#B8ABFF",
+    "selectionBackground": "#3A3168",
+    "black": "#1A1535",
+    "red": "#FF7A9C",
+    "green": "#8EE3C0",
+    "yellow": "#F5D78E",
+    "blue": "#8E9CFF",
+    "purple": "#B8ABFF",
+    "cyan": "#86D4F5",
+    "white": "#D0C8F5",
+    "brightBlack": "#5A5285",
+    "brightRed": "#FF9DB6",
+    "brightGreen": "#A9F0D3",
+    "brightYellow": "#FFE6A8",
+    "brightBlue": "#AEB8FF",
+    "brightPurple": "#D4CBFF",
+    "brightCyan": "#A8E3FA",
+    "brightWhite": "#FFFFFF"
+}

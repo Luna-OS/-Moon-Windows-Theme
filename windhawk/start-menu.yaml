@@ -1,0 +1,130 @@
+# Moon - Windows 11 Start Menu Styler
+# Windhawk > Windows 11 Start Menu Styler > Einstellungen > "Textual mode"
+# Gesamten Inhalt einfuegen und "Save settings" klicken.
+# Funktioniert mit dem neuen Startmenue (Angeheftet / Aktuell / Alle) und dem klassischen.
+styleConstants:
+  - MoonBg=<WindhawkBlur BlurAmount="30" TintColor="#E6130F28" FallbackColor="#FF130F28"/>
+  - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
+  - MoonCard=<SolidColorBrush Color="#14B8ABFF"/>
+  - MoonCardHover=<SolidColorBrush Color="#29B8ABFF"/>
+  - MoonCardPressed=<SolidColorBrush Color="#1FB8ABFF"/>
+  - MoonBorder=<SolidColorBrush Color="#598E7CFF"/>
+  - MoonBorderSoft=<SolidColorBrush Color="#2E8E7CFF"/>
+  - MoonText=#EEEAFF
+  - MoonTextDim=#ABA3D6
+  - MoonAccent=#B8ABFF
+  - Radius=12
+  - InnerRadius=8
+controlStyles:
+  # Hintergrund des Startmenues und der Suche
+  - target: Border#AcrylicBorder
+    styles:
+      - Background:=$MoonBg
+      - BorderBrush:=$MoonBorder
+      - BorderThickness=1
+      - CornerRadius=$Radius
+  - target: Border#AcrylicOverlay
+    styles:
+      - Opacity=0
+  - target: StartMenu.StartBlendedFlexFrame
+    styles:
+      - CornerRadius=$Radius
+  - target: Border#StartDropShadow, Border#DropShadow, Border#dropshadow, Border#RightCompanionDropShadow
+    styles:
+      - CornerRadius=$Radius
+  - target: Border#AppBorder, Border#AccentAppBorder
+    styles:
+      - Background:=$MoonBg
+      - BorderBrush:=$MoonBorder
+      - BorderThickness=1
+      - CornerRadius=$Radius
+  - target: Border#LayerBorder
+    styles:
+      - Visibility=Collapsed
+
+  # Suchfeld
+  - target: StartMenu.SearchBoxToggleButton > Grid > Border#BorderElement, StartDocked.SearchBoxToggleButton > Grid > Border#BorderElement
+    styles:
+      - Background:=$MoonCard
+      - BorderBrush:=$MoonBorderSoft
+      - BorderThickness=1
+      - CornerRadius=20
+  - target: TextBlock#PlaceholderText
+    styles:
+      - Foreground=$MoonTextDim
+
+  # Ueberschriften: Angeheftet / Aktuell / Alle
+  - target: TextBlock#PinnedListHeaderText, TextBlock#AllListHeadingText, TextBlock#AllAppsHeading
+    styles:
+      - Foreground=$MoonAccent
+  - target: Grid#TopLevelSuggestionsListHeader > * > TextBlock
+    styles:
+      - Foreground=$MoonAccent
+  - target: TextBlock#AppDisplayName, TextBlock#DisplayName, TextBlock#UserTileNameText
+    styles:
+      - Foreground=$MoonText
+
+  # App-Kacheln, Kategorien und Ordner
+  - target: Border#ContentBorder@CommonStates > Grid#DroppedFlickerWorkaroundWrapper > Border
+    styles:
+      - Background@PointerOver:=$MoonCardHover
+      - Background@Pressed:=$MoonCardPressed
+      - CornerRadius=$InnerRadius
+  - target: ListViewItem > Grid#ContentBorder@CommonStates
+    styles:
+      - Background@PointerOver:=$MoonCardHover
+      - Background@Pressed:=$MoonCardPressed
+      - CornerRadius=$InnerRadius
+  - target: StartMenu.FolderModal > Grid > Border
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorder
+      - BorderThickness=1
+      - CornerRadius=$Radius
+
+  # Buttons: "Alle anzeigen", "Ansicht: Kategorie", Benutzer, Ein/Aus
+  - target: Button#ShowAllAppsButton > ContentPresenter@CommonStates
+    styles:
+      - Background@Normal:=$MoonCard
+      - Background@PointerOver:=$MoonCardHover
+      - Background@Pressed:=$MoonCardPressed
+      - BorderBrush:=$MoonBorderSoft
+      - BorderThickness=1
+      - CornerRadius=$InnerRadius
+  - target: Microsoft.UI.Xaml.Controls.DropDownButton > Grid#RootGrid
+    styles:
+      - Background:=$MoonCard
+      - BorderBrush:=$MoonBorderSoft
+      - BorderThickness=1
+      - CornerRadius=$InnerRadius
+  - target: StartDocked.NavigationPaneButton > Grid@CommonStates > Border
+    styles:
+      - Background@PointerOver:=$MoonCardHover
+      - Background@Pressed:=$MoonCardPressed
+      - CornerRadius=$InnerRadius
+
+  # Kontextmenues und Tooltips
+  - target: MenuFlyoutPresenter > Border
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorderSoft
+      - BorderThickness=1
+      - CornerRadius=$InnerRadius
+  - target: ToolTip
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorderSoft
+      - CornerRadius=$InnerRadius
+themeResourceVariables:
+  # Fluent-Farben von Windows 11 auf Moon-Lila umstellen (Dunkelmodus)
+  - CardBackgroundFillColorDefaultBrush:=<SolidColorBrush Color="#14B8ABFF"/>
+  - CardBackgroundFillColorSecondaryBrush:=<SolidColorBrush Color="#0FB8ABFF"/>
+  - CardStrokeColorDefaultBrush:=<SolidColorBrush Color="#2E8E7CFF"/>
+  - ControlFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
+  - ControlFillColorSecondaryBrush:=<SolidColorBrush Color="#24B8ABFF"/>
+  - ControlFillColorTertiaryBrush:=<SolidColorBrush Color="#0FB8ABFF"/>
+  - ControlStrokeColorDefaultBrush:=<SolidColorBrush Color="#268E7CFF"/>
+  - SubtleFillColorSecondaryBrush:=<SolidColorBrush Color="#1FB8ABFF"/>
+  - SubtleFillColorTertiaryBrush:=<SolidColorBrush Color="#14B8ABFF"/>
+  - DividerStrokeColorDefaultBrush:=<SolidColorBrush Color="#298E7CFF"/>
+  - TextFillColorSecondaryBrush:=<SolidColorBrush Color="#D0C8F5"/>
