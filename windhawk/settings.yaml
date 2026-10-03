@@ -1,0 +1,101 @@
+# Moon - Windows 11 Settings Styler
+# Windhawk > Windows 11 Settings Styler > Einstellungen > "Textual mode"
+# Gesamten Inhalt einfuegen, "Save settings" klicken und die Einstellungen-App neu oeffnen.
+# Faerbt Menue, Inhaltsbereich, Karten, Startseite, Suchfeld, Symbole, Menues und Dialoge lila.
+styleConstants:
+  - MoonContent=<SolidColorBrush Color="#59130F28"/>
+  - MoonCard=<SolidColorBrush Color="#1FB8ABFF"/>
+  - MoonFlyout=<WindhawkBlur BlurAmount="30" TintColor="#F21A1535" FallbackColor="#FF1A1535"/>
+  - MoonBorder=<SolidColorBrush Color="#598E7CFF"/>
+  - MoonBorderSoft=<SolidColorBrush Color="#2E8E7CFF"/>
+  - MoonIcon=<SolidColorBrush Color="{ThemeResource SystemAccentColorLight2}"/>
+  - MoonTextDim=#ABA3D6
+  - Radius=12
+  - InnerRadius=8
+controlStyles:
+  # Inhaltsbereich rechts (das Menue links bleibt Mica und wird durch den Moon-Hintergrund lila)
+  - target: SplitView#RootSplitView > Grid > Grid#ContentRoot > Border > Grid#ContentGrid
+    styles:
+      - Background:=$MoonContent
+      - BorderBrush:=$MoonBorderSoft
+
+  # Suchfeld oben
+  - target: TextBox#CommandSearchTextBox
+    styles:
+      - CornerRadius=16
+      - MinHeight=32
+      - BorderBrush:=$MoonBorderSoft
+  - target: StackPanel#SettingsCommandSearchBoxBackground
+    styles:
+      - CornerRadius=16
+
+  # Symbole in den Karten in Lila
+  - target: ContentPresenter#IconContentPresenter
+    styles:
+      - Foreground:=$MoonIcon
+
+  # Karten: abgerundet
+  - target: Windows.UI.Xaml.Controls.Primitives.ListViewItemPresenter > SystemSettings.View.EntityItem > Grid
+    styles:
+      - CornerRadius=$InnerRadius
+  - target: SystemSettings.View.SettingsListViewItem > Windows.UI.Xaml.Controls.Primitives.ListViewItemPresenter > Border
+    styles:
+      - CornerRadius=$InnerRadius
+  - target: SystemSettings.View.ButtonEntityItem > Button#ContainerButton > ContentPresenter#ContentPresenter
+    styles:
+      - CornerRadius=$InnerRadius
+  - target: SystemSettings.View.SettingsExpander > Grid > SystemSettings.View.ExpanderToggleButton#ContainerButton > ContentPresenter#ContentPresenter
+    styles:
+      - CornerRadius=$InnerRadius
+  - target: SystemSettings.View.SettingsExpander > Grid > ContentPresenter#RevealedContent
+    styles:
+      - CornerRadius=0,0,$InnerRadius,$InnerRadius
+
+  # Startseite (Empfohlene Einstellungen, Cloudspeicher, ...)
+  - target: Microsoft.ReactNative.ReactRootView > Microsoft.ReactNative.ViewPanel > Microsoft.ReactNative.ViewPanel > Microsoft.ReactNative.ViewPanel > Microsoft.ReactNative.ViewPanel > Border
+    styles:
+      - Background:=$MoonCard
+      - CornerRadius=$Radius
+  - target: ContentPresenter#SubtitleContent > TextBlock
+    styles:
+      - Foreground=$MoonTextDim
+
+  # Menues, Tooltips, Dropdowns, Dialoge
+  - target: Windows.UI.Xaml.Controls.MenuFlyoutPresenter > Windows.UI.Xaml.Controls.Border
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorder
+      - CornerRadius=$InnerRadius
+  - target: Windows.UI.Xaml.Controls.FlyoutPresenter
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorder
+      - CornerRadius=$InnerRadius
+  - target: Windows.UI.Xaml.Controls.Canvas > Windows.UI.Xaml.Controls.Border#PopupBorder
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorder
+      - CornerRadius=$InnerRadius
+  - target: Windows.UI.Xaml.Controls.ToolTip > Windows.UI.Xaml.Controls.ContentPresenter#LayoutRoot
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorderSoft
+  - target: Windows.UI.Xaml.Controls.Border#BackgroundElement > Windows.UI.Xaml.Controls.Grid#DialogSpace
+    styles:
+      - Background:=$MoonFlyout
+      - BorderBrush:=$MoonBorder
+      - CornerRadius=$Radius
+themeResourceVariables:
+  # Fluent-Farben der Einstellungen-App auf Moon-Lila umstellen (Dunkelmodus)
+  - CardBackgroundFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
+  - CardBackgroundFillColorSecondaryBrush:=<SolidColorBrush Color="#12B8ABFF"/>
+  - CardStrokeColorDefaultBrush:=<SolidColorBrush Color="#2E8E7CFF"/>
+  - ControlFillColorDefaultBrush:=<SolidColorBrush Color="#1AB8ABFF"/>
+  - ControlFillColorSecondaryBrush:=<SolidColorBrush Color="#26B8ABFF"/>
+  - ControlFillColorTertiaryBrush:=<SolidColorBrush Color="#0FB8ABFF"/>
+  - ControlStrokeColorDefaultBrush:=<SolidColorBrush Color="#268E7CFF"/>
+  - SubtleFillColorSecondaryBrush:=<SolidColorBrush Color="#1FB8ABFF"/>
+  - SubtleFillColorTertiaryBrush:=<SolidColorBrush Color="#14B8ABFF"/>
+  - DividerStrokeColorDefaultBrush:=<SolidColorBrush Color="#298E7CFF"/>
+  - LayerFillColorDefaultBrush:=<SolidColorBrush Color="#59130F28"/>
+  - TextFillColorSecondaryBrush:=<SolidColorBrush Color="#D0C8F5"/>

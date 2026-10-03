@@ -250,7 +250,7 @@ Write-Host ''
 Write-Host '  Fuer den kompletten Look (Startmenue, Taskleiste, Infocenter, Explorer):' -ForegroundColor White
 Write-Host '    1. Windhawk installieren (https://windhawk.net oder .\install.ps1 -InstallWindhawk)'
 Write-Host '    2. Die Mods aus der README installieren'
-Write-Host "    3. Inhalt der Dateien aus '$(Join-Path $Root 'windhawk')' in den Mod-Einstellungen einfuegen"
+Write-Host "    3. Inhalt der Dateien (auch settings.yaml fuer die Einstellungen-App) aus '$(Join-Path $Root 'windhawk')' in den Mod-Einstellungen einfuegen"
 Write-Host ''
 Write-Host '  Falls die Farben noch nicht ueberall stimmen: einmal ab- und wieder anmelden.' -ForegroundColor DarkGray
 Write-Host '  Rueckgaengig machen: .\uninstall.ps1' -ForegroundColor DarkGray
