@@ -10,7 +10,8 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | --- | --- | --- |
 | Hintergrund (3 Motive, 4K) | Installationsskript | `theme/Wallpapers/` |
 | Dunkelmodus, Transparenz, Akzentfarbe Lila | Installationsskript | `install.ps1` |
-| **Einstellungen-App** | Dunkelmodus, lila Akzent (Links, Schalter, Markierungen), lila Mica-Tönung durch den Hintergrund | `install.ps1` |
+| **Einstellungen-App** (Grundfarben) | Dunkelmodus, lila Akzent (Links, Schalter, Markierungen), lila Mica-Tönung durch den Hintergrund | `install.ps1` |
+| **Einstellungen-App** (Inhalt: Karten, Startseite, Suchfeld, Symbole, Menüs, Dialoge) | Windhawk-Mod | `windhawk/settings.yaml` |
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
 | **Startmenü** (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
 | **Taskleiste**, Infobereich, Fenstervorschau, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` |
@@ -28,7 +29,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 2. **`Install.cmd` doppelklicken.**
    Die Einstellungen-App geht dabei kurz auf und wieder zu, danach startet der Explorer neu.
 
-Das war's für Hintergrund, Dunkelmodus, Akzentfarbe, Einstellungen-App und Titelleisten.
+Das war's für Hintergrund, Dunkelmodus, Akzentfarbe, die Grundfarben der Einstellungen-App und Titelleisten.
 
 Optionen (in PowerShell im Ordner ausführen):
 
@@ -51,6 +52,7 @@ Windows lässt Startmenü und Taskleiste nicht direkt umfärben. Dafür gibt es 
    - **Windows 11 Taskbar Styler**
    - **Windows 11 Notification Center Styler**
    - **Windows 11 File Explorer Styler**
+   - **Windows 11 Settings Styler**
    - *(optional)* **Translucent Windows**
 3. Für jeden Mod:
    1. Mod öffnen → Tab **„Settings“ / „Einstellungen“**
@@ -64,6 +66,7 @@ Windows lässt Startmenü und Taskleiste nicht direkt umfärben. Dafür gibt es 
 | Windows 11 Taskbar Styler | `windhawk/taskbar.yaml` |
 | Windows 11 Notification Center Styler | `windhawk/notification-center.yaml` |
 | Windows 11 File Explorer Styler | `windhawk/file-explorer.yaml` |
+| Windows 11 Settings Styler | `windhawk/settings.yaml` |
 | Translucent Windows | `windhawk/translucent-windows.yaml` |
 
 Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen oder den Explorer neu starten (Task-Manager → „Windows-Explorer“ → „Neu starten“).
@@ -93,7 +96,7 @@ Akzent-Palette (Windows): `#E2DCFF` `#C9BFFF` `#AC9EFF` **`#8E7CFF`** `#6A57E0` 
 
 ## Gut zu wissen
 
-- **Einstellungen-App**: Ihr Inhalt lässt sich bei Windows 11 nicht frei umstylen, auch nicht mit Windhawk. Moon färbt sie über Dunkelmodus, Akzentfarbe und Mica: Der lila Hintergrund tönt das Fenster ein, Links, Schalter und Markierungen werden lila.
+- **Einstellungen-App**: Ohne Windhawk färbt Moon sie über Dunkelmodus, Akzentfarbe und Mica: Der lila Hintergrund tönt das Fenster ein, Links, Schalter und Markierungen werden lila. Mit dem **Windows 11 Settings Styler** und `windhawk/settings.yaml` werden zusätzlich Inhaltsbereich, Karten, Startseite, Suchfeld, Symbole, Menüs und Dialoge lila. Nach dem Speichern die Einstellungen-App schließen und neu öffnen.
 - Wenn nach der Installation noch nicht alles lila ist (z. B. in einzelnen Apps): **einmal ab- und wieder anmelden**.
 - **Windows-Updates** können Startmenü oder Taskleiste intern ändern. Wenn danach einzelne Teile wieder grau aussehen, Windhawk und die Mods aktualisieren.
 - **„Windows hat den PC geschützt“** beim Start von `Install.cmd`: auf „Weitere Informationen“ → „Trotzdem ausführen“ klicken. Alternativ Rechtsklick auf die ZIP → Eigenschaften → „Zulassen“, bevor du entpackst.
@@ -106,7 +109,7 @@ install.ps1 / Install.cmd        Grund-Theme installieren
 uninstall.ps1 / Uninstall.cmd    Alles zurücksetzen
 theme/Moon.theme                 Windows-Theme-Datei
 theme/Wallpapers/                Hintergründe (4K)
-windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer
+windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
 ```
