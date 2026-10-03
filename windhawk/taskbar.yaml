@@ -7,6 +7,9 @@
 #   Taskbar Height = 48, Icon Size = 23, Taskbar Button Width = 45
 styleConstants:
   - mainRadius=8
+  - startTile=<ImageBrush Stretch="UniformToFill" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start-tile.png"/>
+  - startTileHover=<ImageBrush Stretch="UniformToFill" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start-tile-hover.png"/>
+  - startTileActive=<ImageBrush Stretch="UniformToFill" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start-tile-active.png"/>
   - transparent=<SolidColorBrush Color="Transparent"/>
   - base=<WindhawkBlur BlurAmount="16" TintColor="#4D1A1535" FallbackColor="#E61A1535"/>
   - hover=<WindhawkBlur BlurAmount="16" TintColor="#40B8ABFF" FallbackColor="#E62E2656"/>
@@ -34,10 +37,7 @@ controlStyles:
     styles:
       - CornerRadius=$mainRadius
 
-  # Start-Button: Moon-Logo statt Windows-Logo (Bild wird von GitHub geladen)
-  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel
-    styles:
-      - Background:=<ImageBrush Stretch="Uniform" ImageSource="https://raw.githubusercontent.com/Luna-OS/Moon-Windows-Theme/main/theme/Icons/moon-start.png"/>
+  # Start-Button: Windows-Logo ausblenden (das Moon-Logo sitzt weiter unten auf der Kachel)
   - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Grid > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon, Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel > Microsoft.UI.Xaml.Controls.AnimatedVisualPlayer#Icon
     styles:
       - Visibility=Collapsed
@@ -55,6 +55,18 @@ controlStyles:
       - Background@ActiveNormal:=$active
       - Background@ActivePointerOver:=$activeHover
       - Background@ActivePressed:=$pressed
+  # Start-Kachel mit Moon-Logo. Muss NACH der Regel oben stehen: bei mehreren passenden Regeln
+  # gewinnt fuer dieselbe Eigenschaft die letzte. Das Logo ist in die Kachelbilder eingebaut,
+  # weil die Glas-Kachel sonst ueber dem Logo liegen und es verdecken wuerde.
+  - target: Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel@CommonStates > Grid > Border#BackgroundElement, Taskbar.ExperienceToggleButton#LaunchListButton[AutomationProperties.AutomationId=StartButton] > Taskbar.TaskListButtonPanel@CommonStates > Border#BackgroundElement
+    styles:
+      - Background:=$startTile
+      - Background@InactiveNormal:=$startTile
+      - Background@InactivePointerOver:=$startTileHover
+      - Background@InactivePressed:=$startTileActive
+      - Background@ActiveNormal:=$startTileActive
+      - Background@ActivePointerOver:=$startTileHover
+      - Background@ActivePressed:=$startTileActive
   - target: SearchUx.SearchUI.SearchButtonRootGrid@CommonStates > Grid > Border#BackgroundElement, SearchUx.SearchUI.SearchButtonRootGrid@CommonStates > Border#BackgroundElement
     styles:
       - CornerRadius=$mainRadius

@@ -166,9 +166,26 @@ def draw_start_logo(px=256):
     return img.resize((px, px), Image.LANCZOS)
 
 
+# Start-Kacheln fuer die Matter-Taskleiste: Logo auf der Kachelfarbe des jeweiligen Zustands.
+# (Die Glas-Kachel liegt ueber dem Button-Hintergrund, deshalb muss das Logo auf der Kachel sitzen.)
+START_TILES = {
+    "moon-start-tile.png": (26, 21, 53, 115),         # normal
+    "moon-start-tile-hover.png": (184, 171, 255, 70),  # Maus darueber
+    "moon-start-tile-active.png": (142, 124, 255, 105), # Startmenue offen
+}
+
+
+def draw_start_tile(rgba, px=256):
+    tile = Image.new("RGBA", (px, px), rgba)
+    tile.alpha_composite(draw_start_logo(px))
+    return tile
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     draw_start_logo().save(OUT / "moon-start.png", optimize=True)
+    for name, rgba in START_TILES.items():
+        draw_start_tile(rgba).save(OUT / name, optimize=True)
     closed = save_ico("moon-folder.ico", opened=False)
     opened = save_ico("moon-folder-open.ico", opened=True)
     # Vorschau auf dunklem und hellem Hintergrund
