@@ -16,6 +16,7 @@ Ein dunkles Windows-11-Theme in **Nachtblau + Lila**. Es färbt nicht nur den Hi
 | **Einstellungen-App** mit Sternenhimmel (Karten, Startseite, Suchfeld, Symbole, Menüs, Dialoge) | Windhawk-Mod | `windhawk/settings.yaml` |
 | Titelleisten und Fensterrahmen | Installationsskript | `install.ps1` |
 | **Ordnersymbole** (lila Ordner mit Mondsichel, passend zu Moon Explorer) | Installationsskript (Admin) | `theme/Icons/` |
+| **Sounds**: eigenes Soundschema „Moon“ mit sanften Glockenklängen (Benachrichtigung, Fehler, Warnung, USB, Akku, Anmelden …) | Installationsskript | `theme/Sounds/` |
 | **Startmenü** mit Sternenhimmel (Angeheftet, Aktuell, Alle, Kategorien, Suche) | Windhawk-Mod | `windhawk/start-menu.yaml` |
 | **Taskleiste** im Matter-Stil: durchsichtig, Apps als lila Glas-Kacheln, Moon-Start-Logo, Infobereich, Alt+Tab, Taskansicht | Windhawk-Mod | `windhawk/taskbar.yaml` (alter Glas-Look: `taskbar-glass.yaml`) |
 | Infocenter: Benachrichtigungen, Kalender, Schnelleinstellungen, Medien, Sprunglisten | Windhawk-Mod | `windhawk/notification-center.yaml` |
@@ -62,6 +63,7 @@ Optionen (in PowerShell im Ordner ausführen):
 .\install.ps1 -TaskbarAlignment Left     # Taskleisten-Symbole links
 .\install.ps1 -NoAccentOnTaskbar         # Taskleiste nicht lila einfärben
 .\install.ps1 -NoFolderIcons             # gelbe Standard-Ordner behalten
+.\install.ps1 -NoSounds                  # Windows-Sounds behalten
 .\install.ps1 -LockScreen                # auch Sperrbildschirm (PowerShell als Admin)
 .\install.ps1 -InstallWindhawk           # Windhawk gleich mitinstallieren
 ```
@@ -97,6 +99,7 @@ Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen od
 
 ### Schritt 3 (optional): Feinschliff
 
+- **Sounds**: Die Moon-Klänge sind komplett selbst erzeugt, also ohne fremde Aufnahmen. Du findest sie unter Einstellungen → System → Sound → Weitere Soundeinstellungen → Sounds als Schema „Moon“. Wird das Moon-Theme später über die Einstellungen neu angewendet, setzt Windows die Sounds zurück. Dann einfach den Installer noch einmal starten.
 - **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). Damit Windows das Moon-Symbol nicht nach einem Moment wieder durch die gelbe Ordnervorschau (Ordner mit Inhalt) ersetzt, schaltet Moon nur diese Ordnervorschau ab. Vorschaubilder von Fotos und Videos bleiben erhalten. „Theme entfernen“ stellt alles wieder her.
 - **Lila Mauszeiger**: Einstellungen → Barrierefreiheit → Mauszeiger und Toucheingabe → Stil „Benutzerdefiniert“ → Farbe `#B8ABFF`.
 - **Windows Terminal**: Inhalt von `extras/windows-terminal-moon.json` in der `settings.json` unter `"schemes"` einfügen und im Profil `"colorScheme": "Moon"` setzen.
@@ -139,11 +142,13 @@ theme/Moon.theme                 Windows-Theme-Datei
 theme/Wallpapers/                Hintergründe (4K)
 theme/Starfield/                 Sternenhimmel für Startmenü und Einstellungen
 theme/Icons/                     Moon-Ordnersymbole (.ico) und Start-Logo (moon-start.png)
+theme/Sounds/                    Moon-Soundschema (.wav)
 windhawk/                        Styles für Startmenü, Taskleiste, Infocenter, Explorer, Einstellungen
 extras/                          Windows-Terminal-Farbschema
 tools/generate_wallpapers.py     Erzeugt die Hintergründe neu (pip install pillow numpy)
 tools/build_windhawk_settings.py Erzeugt windhawk/json/ aus den YAML-Styles (pip install pyyaml)
 tools/generate_icons.py          Erzeugt die Ordnersymbole neu (pip install pillow numpy)
+tools/generate_sounds.py         Erzeugt die Moon-Sounds neu (pip install numpy)
 tools/Bilder neu erzeugen.cmd    Startet alle Generatoren (nur für Entwickler – zum Anwenden den Moon Installer nutzen)
 ```
 

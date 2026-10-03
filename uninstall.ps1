@@ -121,6 +121,48 @@ if (Test-Path $LockDir) {
     }
 }
 
+# 3b) Moon-Sounds entfernen und vorheriges Soundschema wiederherstellen
+$SoundBackup = Join-Path $ThemeDir 'sounds-backup.json'
+$hkcu = [Microsoft.Win32.Registry]::CurrentUser
+$schemes = $hkcu.OpenSubKey('AppEvents\Schemes', $true)
+if ($schemes -and ($schemes.GetValue('') -eq '.Moon' -or (Test-Path $SoundBackup))) {
+    Write-Step 'Stelle vorherige Windows-Sounds wieder her ...'
+    $saved = $null
+    if (Test-Path $SoundBackup) { $saved = Get-Content -Path $SoundBackup -Raw | ConvertFrom-Json }
+    $apps = $hkcu.OpenSubKey('AppEvents\Schemes\Apps')
+    foreach ($app in $apps.GetSubKeyNames()) {
+        $appKey = $apps.OpenSubKey($app)
+        foreach ($ev in $appKey.GetSubKeyNames()) {
+            $evKey = $hkcu.OpenSubKey("AppEvents\Schemes\Apps\$app\$ev", $true)
+            if (-not $evKey) { continue }
+            if ($evKey.GetSubKeyNames() -contains '.Moon') {
+                $name = "$app\$ev"
+                $restore = $null
+                $hasSaved = $false
+                if ($saved -and $saved.Events.PSObject.Properties.Name -contains $name) {
+                    $restore = $saved.Events.$name; $hasSaved = $true
+                }
+                if (-not $hasSaved) {
+                    # kein Backup: Windows-Standardklang verwenden
+                    $def = $evKey.OpenSubKey('.Default')
+                    if ($def) { $restore = $def.GetValue(''); $def.Close() }
+                }
+                $cur = $evKey.CreateSubKey('.Current')
+                if ($null -ne $restore) { $cur.SetValue('', $restore, [Microsoft.Win32.RegistryValueKind]::ExpandString) } else { $cur.SetValue('', '') }
+                $cur.Close()
+                $evKey.DeleteSubKeyTree('.Moon', $false)
+            }
+            $evKey.Close()
+        }
+        $appKey.Close()
+    }
+    $apps.Close()
+    $prevScheme = if ($saved -and $saved.Scheme -and $saved.Scheme -ne '.Moon') { $saved.Scheme } else { '.Default' }
+    $schemes.SetValue('', $prevScheme)
+    try { $hkcu.DeleteSubKeyTree('AppEvents\Schemes\Names\.Moon', $false) } catch { }
+}
+if ($schemes) { $schemes.Close() }
+
 # 4) Dateien loeschen
 if (-not $KeepFiles) {
     Write-Step 'Loesche Moon-Dateien ...'

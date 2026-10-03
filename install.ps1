@@ -43,6 +43,9 @@ param(
     # Moon-Ordnersymbole NICHT setzen (sie benoetigen Administratorrechte).
     [switch]$NoFolderIcons,
 
+    # Moon-Sounds NICHT als Soundschema setzen.
+    [switch]$NoSounds,
+
     # Explorer am Ende nicht neu starten.
     [switch]$NoExplorerRestart
 )
@@ -52,6 +55,32 @@ $ErrorActionPreference = 'Stop'
 $Root      = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ThemeDir  = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Themes\Moon'
 $Backup    = Join-Path $ThemeDir 'backup.json'
+$SoundBackup = Join-Path $ThemeDir 'sounds-backup.json'
+
+# Windows-Ereignis -> Moon-Klang (HKCU\AppEvents\Schemes\Apps\<App>\<Ereignis>)
+$MoonSounds = [ordered]@{
+    '.Default\.Default'              = 'moon-default.wav'
+    '.Default\Notification.Default'  = 'moon-notification.wav'
+    '.Default\SystemNotification'    = 'moon-notification.wav'
+    '.Default\SystemAsterisk'        = 'moon-info.wav'
+    '.Default\SystemExclamation'     = 'moon-warning.wav'
+    '.Default\SystemHand'            = 'moon-error.wav'
+    '.Default\SystemQuestion'        = 'moon-question.wav'
+    '.Default\DeviceConnect'         = 'moon-device-connect.wav'
+    '.Default\DeviceDisconnect'      = 'moon-device-disconnect.wav'
+    '.Default\DeviceFail'            = 'moon-device-fail.wav'
+    '.Default\WindowsUAC'            = 'moon-uac.wav'
+    '.Default\Notification.Reminder' = 'moon-reminder.wav'
+    '.Default\Notification.IM'       = 'moon-message.wav'
+    '.Default\Notification.Mail'     = 'moon-message.wav'
+    '.Default\Notification.SMS'      = 'moon-message.wav'
+    '.Default\MailBeep'              = 'moon-message.wav'
+    '.Default\LowBatteryAlarm'       = 'moon-battery-low.wav'
+    '.Default\CriticalBatteryAlarm'  = 'moon-battery-critical.wav'
+    '.Default\WindowsLogon'          = 'moon-logon.wav'
+    '.Default\WindowsLogoff'         = 'moon-logoff.wav'
+    'Explorer\EmptyRecycleBin'       = 'moon-recycle.wav'
+}
 $LockDir   = Join-Path $env:ProgramData 'MoonTheme'
 $IconDir   = Join-Path $LockDir 'Icons'
 
@@ -255,6 +284,45 @@ if (-not $NoFolderIcons) {
     } else {
         Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'
     }
+}
+
+# 6c) Moon-Sounds als eigenes Soundschema "Moon"
+if (-not $NoSounds) {
+    Write-Step 'Setze Moon-Sounds ...'
+    $soundDir = Join-Path $ThemeDir 'Sounds'
+    New-Item -ItemType Directory -Path $soundDir -Force | Out-Null
+    Copy-Item -Path (Join-Path $Root 'theme\Sounds\*.wav') -Destination $soundDir -Force
+
+    $hkcu = [Microsoft.Win32.Registry]::CurrentUser
+    $schemes = $hkcu.CreateSubKey('AppEvents\Schemes')
+
+    # Einmalig sichern, welches Schema und welche Klaenge vorher aktiv waren
+    if (-not (Test-Path $SoundBackup)) {
+        $saved = [ordered]@{ Scheme = $schemes.GetValue(''); Events = [ordered]@{} }
+        foreach ($ev in $MoonSounds.Keys) {
+            $k = $hkcu.OpenSubKey("AppEvents\Schemes\Apps\$ev\.Current")
+            if ($k) { $saved.Events[$ev] = $k.GetValue(''); $k.Close() } else { $saved.Events[$ev] = $null }
+        }
+        $saved | ConvertTo-Json -Depth 4 | Set-Content -Path $SoundBackup -Encoding UTF8
+    }
+
+    $names = $hkcu.CreateSubKey('AppEvents\Schemes\Names\.Moon')
+    $names.SetValue('', 'Moon')
+    $names.Close()
+    foreach ($ev in $MoonSounds.Keys) {
+        # nur Ereignisse, die es auf diesem PC gibt
+        $evKey = $hkcu.OpenSubKey("AppEvents\Schemes\Apps\$ev")
+        if (-not $evKey) { continue }
+        $evKey.Close()
+        $file = Join-Path $soundDir $MoonSounds[$ev]
+        foreach ($sub in '.Moon', '.Current') {
+            $k = $hkcu.CreateSubKey("AppEvents\Schemes\Apps\$ev\$sub")
+            $k.SetValue('', $file, [Microsoft.Win32.RegistryValueKind]::ExpandString)
+            $k.Close()
+        }
+    }
+    $schemes.SetValue('', '.Moon')
+    $schemes.Close()
 }
 
 # 7) Windhawk (optional)
