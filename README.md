@@ -63,6 +63,7 @@ Optionen (in PowerShell im Ordner ausführen):
 .\install.ps1 -TaskbarAlignment Left     # Taskleisten-Symbole links
 .\install.ps1 -NoAccentOnTaskbar         # Taskleiste nicht lila einfärben
 .\install.ps1 -NoFolderIcons             # gelbe Standard-Ordner behalten
+.\install.ps1 -KeepThumbnails            # Miniaturansichten anlassen (Moon-Ordner nur in Liste/Details/kleinen Symbolen)
 .\install.ps1 -NoSounds                  # Windows-Sounds behalten
 .\install.ps1 -LockScreen                # auch Sperrbildschirm (PowerShell als Admin)
 .\install.ps1 -InstallWindhawk           # Windhawk gleich mitinstallieren
@@ -100,7 +101,7 @@ Falls das Startmenü sich nicht sofort ändert: einmal öffnen und schließen od
 ### Schritt 3 (optional): Feinschliff
 
 - **Sounds**: Die Moon-Klänge sind komplett selbst erzeugt, also ohne fremde Aufnahmen. Du findest sie unter Einstellungen → System → Sound → Weitere Soundeinstellungen → Sounds als Schema „Moon“. Wird das Moon-Theme später über die Einstellungen neu angewendet, setzt Windows die Sounds zurück. Dann einfach den Installer noch einmal starten.
-- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). Damit Windows das Moon-Symbol nicht nach einem Moment wieder durch die gelbe Ordnervorschau (Ordner mit Inhalt) ersetzt, schaltet Moon nur diese Ordnervorschau ab. Vorschaubilder von Fotos und Videos bleiben erhalten. „Theme entfernen“ stellt alles wieder her.
+- **Ordnersymbole**: Das Installationsskript ersetzt das gelbe Ordnersymbol systemweit (benötigt Adminrechte). In mittleren und großen Symbolen tauscht Windows das Symbol nach einem Moment gegen eine Miniaturansicht, die immer aus dem gelben Standardordner gezeichnet wird. Damit der Moon-Ordner bleibt, stellt Moon den Explorer auf „Immer Symbole statt Miniaturansichten anzeigen“ – dadurch zeigen auch Fotos und Videos ihr Dateisymbol statt einer Vorschau. Wer die Vorschauen behalten will: `-KeepThumbnails`. „Theme entfernen“ stellt die vorherige Einstellung wieder her.
 - **Lila Mauszeiger**: Einstellungen → Barrierefreiheit → Mauszeiger und Toucheingabe → Stil „Benutzerdefiniert“ → Farbe `#B8ABFF`.
 - **Windows Terminal**: Inhalt von `extras/windows-terminal-moon.json` in der `settings.json` unter `"schemes"` einfügen und im Profil `"colorScheme": "Moon"` setzen.
 
