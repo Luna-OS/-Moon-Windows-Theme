@@ -43,6 +43,10 @@ param(
     # Moon-Ordnersymbole NICHT setzen (sie benoetigen Administratorrechte).
     [switch]$NoFolderIcons,
 
+    # Miniaturansichten im Explorer anlassen. Dann ersetzt Windows das Moon-Ordnersymbol
+    # in mittleren/grossen Symbolen nach einem Moment wieder durch den gelben Ordner.
+    [switch]$KeepThumbnails,
+
     # Moon-Sounds NICHT als Soundschema setzen.
     [switch]$NoSounds,
 
@@ -204,10 +208,19 @@ if (-not (Test-Path $Backup)) {
         Get-RegEntry $ShellIconsKey  '3'                     'String'
         Get-RegEntry $ShellIconsKey  '4'                     'String'
         Get-RegEntry $FolderBagKey   'Logo'                  'String'
+        Get-RegEntry $AdvancedKey    'IconsOnly'             'DWord'
     )
     $entries | ConvertTo-Json -Depth 3 | Set-Content -Path $Backup -Encoding UTF8
 } else {
     Write-Step 'Backup existiert bereits, wird beibehalten.'
+    # Aeltere Backups kennen IconsOnly noch nicht: einmalig den jetzigen (Original-)Wert ergaenzen
+    # Erst zuweisen, dann in ein Array packen (Windows PowerShell 5.1 und ConvertFrom-Json)
+    $json = Get-Content -Path $Backup -Raw | ConvertFrom-Json
+    $entries = @($json)
+    if (-not ($entries | Where-Object { $_.Name -eq 'IconsOnly' })) {
+        $entries += [pscustomobject](Get-RegEntry $AdvancedKey 'IconsOnly' 'DWord')
+        ConvertTo-Json -InputObject $entries -Depth 3 | Set-Content -Path $Backup -Encoding UTF8
+    }
 }
 
 # 3) Theme-Datei mit absolutem Hintergrund-Pfad erzeugen und anwenden
@@ -276,10 +289,18 @@ if (-not $NoFolderIcons) {
         Copy-Item -Path (Join-Path $Root 'theme\Icons\moon-folder-open.ico') -Destination $openIcon -Force
         Set-RegValue $ShellIconsKey '3' ($closedIcon + ',0') 'String'
         Set-RegValue $ShellIconsKey '4' ($openIcon + ',0') 'String'
-        # Ordnervorschau (Inhalt im gelben Ordner) abschalten, sonst ersetzt Windows das Moon-Symbol
-        # kurz nach dem Anzeigen wieder. Die Vorlage zeigt absichtlich auf eine NICHT vorhandene Datei;
-        # Vorschaubilder von Fotos/Videos bleiben erhalten.
-        Set-RegValue $FolderBagKey 'Logo' (Join-Path $LockDir 'no-folder-preview.jpg') 'String'
+        # Explorer zeigt in mittleren/grossen Symbolen zuerst das Symbol (Moon) und tauscht es nach
+        # einem Moment gegen eine Miniaturansicht, die Windows immer aus dem gelben Standardordner
+        # zeichnet - Shell Icons wirkt darauf nicht. Deshalb "Immer Symbole statt Miniaturansichten".
+        if (-not $KeepThumbnails) {
+            Set-RegValue $AdvancedKey 'IconsOnly' 1
+        }
+        # Der fruehere Versuch ueber die Ordnervorlage (Logo) half nicht: alten Wert wieder entfernen
+        $logo = $null
+        try { $logo = (Get-ItemProperty -Path $FolderBagKey -Name 'Logo' -ErrorAction Stop).Logo } catch { }
+        if ($logo -and $logo -like "$LockDir*") {
+            Remove-ItemProperty -Path $FolderBagKey -Name 'Logo' -ErrorAction SilentlyContinue
+        }
         $iconsChanged = $true
     } else {
         Write-Warning 'Fuer die Moon-Ordnersymbole PowerShell als Administrator starten (oder den Moon Installer benutzen). Uebersprungen.'
